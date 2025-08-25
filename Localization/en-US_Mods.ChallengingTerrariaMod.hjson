@@ -1,0 +1,173 @@
+Buffs: {
+	Bloated: {
+		DisplayName: Bloated
+		Description: You ate too much! Great decrease in movement speed. Also, be careful! If you eat more you may throw up.
+	}
+
+	Famished: {
+		DisplayName: Famished
+		Description: You're so hungry it feels like you stomach is burning! Great decrease on defense stats and mining speed.
+	}
+
+	Full: {
+		DisplayName: Full
+		Description: You ate a little more than you needed! Small decrease in movement speed.
+	}
+
+	Hungry: {
+		DisplayName: Hungry
+		Description: You are hungry! Medium decrease on defensive stats and mining speed.
+	}
+
+	Nauseous: {
+		DisplayName: Nauseous
+		Description: Your are feeling sick and really dont want to eat anything right now.
+	}
+
+	Peckish: {
+		DisplayName: Peckish
+		Description: You're not very hungry, but eating something wouldn't be bad. Small decrease on defensive stats and mining speed.
+	}
+
+	Starved: {
+		DisplayName: Starved
+		Description: Your body cant take any longe without food! Great decrease on defensive stats and mining speed, and you also lose life per second.
+	}
+
+	ThrowingUp: {
+		DisplayName: Throwing Up
+		Description: Eating too much food caused your body to expel it.
+	}
+
+	Cold: {
+		DisplayName: Cold
+		Description: You're starting to feel a little bit cold. Mining speed and building speed slightly decreased.
+	}
+
+	Freezing: {
+		DisplayName: Freezing
+		Description: Your whole body feels like it's about to freeze. Great decrease in mining speed and building speed. Every second you have a small chance of freezing or getting the frostburn effect.
+	}
+
+	Hot: {
+		DisplayName: Hot
+		Description: You are sweating like crazy and feeling overheated. Medium decrease in mining speed and building speed. Every second you have a small chance of getting the On fire debuff.
+	}
+
+	Scorching: {
+		DisplayName: Scorching
+		Description: it feels like your skin is burning and your organs are going to melt down. Great decrease in mining speed and building speed. Every second you have a small chance of getting the On fire debuff and you also take damage continuously.
+	}
+
+	Flee: {
+		DisplayName: Flee
+		Description: You're running away from the last enemie that hit you.
+	}
+
+	Scared: {
+		DisplayName: Scared
+		Description: You feel tense and scared. Your surrounds look scarier and darker. Medium reduction to damage and crit chance.
+	}
+
+	Stressed: {
+		DisplayName: Stressed
+		Description: Something is making you uncomfortable. Minor reduction to damage and crit chance.
+	}
+
+	Terrified: {
+		DisplayName: Terrified
+		Description: An uncontrollable fear is taking over your brain. Great reduction to damage and crit chance. When attacked, you character has a small chance of running away from the enemies. Also, be careful, staying in the dark for too long can be dangerous.
+	}
+
+	VeryCold: {
+		DisplayName: Very Cold
+		Description: It's so cold your fingertips and face are numb. Medium decrease in mining speed and building speed. Every second you have a small chance of getting the frostburn effect.
+	}
+
+	Warm: {
+		DisplayName: Warm
+		Description: The air around is warm, making you start to sweat. Medium decrease in mining speed and building speed
+	}
+
+	Tired: {
+		Description: You are getting tired. Minor decrease in Mana and Hp stats.
+		DisplayName: Tired
+	}
+
+	Sleepy: {
+		Description: You could use some rest. Medium decrease in Mana and Hp stats.
+		DisplayName: Sleepy
+	}
+
+	Fainted: {
+		Description: You are so tired that you fainted. Unable to move or use itens until the debuff ends.
+		DisplayName: Unconscious
+	}
+
+	Exhausted: {
+		Description: You really needs to sleep. Great decrease in Mana and Hp stats. You may also randomly get the Confused debuff.
+		DisplayName: Exhausted
+	}
+
+	SleepDeprived: {
+		DisplayName: Sleep Deprived
+		Description: You haven't been sleeping well lately. In this state, you're slowly losing rest points, even during the day.
+	}
+
+	ArmoredMind: {
+		DisplayName: Armored Mind
+		Description: Nothing can shake you.
+	}
+
+	Cafeinated: {
+		DisplayName: Cafeinated
+		Description: Your a little too energetic.
+	}
+
+	Cancer: {
+		DisplayName: Cancer
+		Description: It's exactly what you're reading. Get cured by the nurse, for a high price.
+	}
+
+	Nourished: {
+		DisplayName: Nourished
+		Description: Your body is well nourished.
+	}
+
+	BadRest: {
+		DisplayName: Bad rest
+		Description: You feel unsafe sleeping outside a town. Rest regeneration while sleeping is halved.
+	}
+}
+
+Projectiles: {
+	FaintedVFX.DisplayName: Fainted VFX
+	CigaretteProjectile.DisplayName: Cigarette Projectile
+}
+
+Items: {
+	Cigarette: {
+		DisplayName: Cigarette
+		Tooltip: Retards sanity loss. Smoke in moderation!
+	}
+
+	Vitamin: {
+		DisplayName: Vitamin
+		Tooltip: Retards hunger loss.
+	}
+
+	AdrenalineInjection: {
+		DisplayName: Adrenaline Injection
+		Tooltip: Retards sanity loss.
+	}
+
+	CaffeinePill: {
+		DisplayName: Caffeine Pill
+		Tooltip: Retards rest loss.
+	}
+
+	FoodPill: {
+		DisplayName: Food Pill
+		Tooltip: Retards hunger loss.
+	}
+}

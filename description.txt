@@ -1,0 +1,1 @@
+This mod adds hunger, sleep, sanity, and temperature systems to Terraria. The goal is to make the game more challenging.
