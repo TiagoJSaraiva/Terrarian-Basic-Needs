@@ -136,7 +136,7 @@ Buffs: {
 
 	BadRest: {
 		DisplayName: Bad rest
-		Description: You feel unsafe sleeping outside a town. Rest regeneration while sleeping is halved.
+		Description: You cannot sleep well on a chair or outside a town.
 	}
 }
 
@@ -169,5 +169,31 @@ Items: {
 	FoodPill: {
 		DisplayName: Food Pill
 		Tooltip: Retards hunger loss.
+	}
+}
+
+Configs: {
+	MeuModConfig: {
+		DisplayName: Terrarian Basic Needs - Configurations
+
+		HungerMultiplier: {
+			Label: Hunger Multiplier
+			Tooltip: Adjusts the hunger rate.
+		}
+
+		RestMultiplier: {
+			Label: Rest Multiplier
+			Tooltip: Adjusts the rest rate.
+		}
+
+		sanityMultiplier: {
+			Label: Sanity Multiplier
+			Tooltip: Adjusts the sanity rate.
+		}
+
+		warmthMultiplier: {
+			Label: Warmth Multiplier
+			Tooltip: Adjusts the warmth rate.
+		}
 	}
 }

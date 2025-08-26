@@ -9,6 +9,7 @@ using Terraria.Localization;
 using ChallengingTerrariaMod.Content.Systems.UI;
 using System;
 using ChallengingTerrariaMod.Content.Buffs;
+using ChallengingTerrariaMod.Content.ModConfigs;
 
 namespace ChallengingTerrariaMod.Content.Systems
 {
@@ -17,9 +18,9 @@ namespace ChallengingTerrariaMod.Content.Systems
         public const int restUpdateRate = 60; // Atualiza a cada 60 ticks (1 segundo real)
 
         // Sleep gain and loss of the player
-        private const int sleepPerSecond = 4;
+        private const float sleepPerSecond = 4;
 
-        private const int sleepPerSecondAccelerated = 24; // Tiredness loss per second when the time is accelerated
+        private const float sleepPerSecondAccelerated = 24; // Tiredness loss per second when the time is accelerated
 
         public const short maxSleep = 1200;
         public const int minSleep = 0;
@@ -81,7 +82,7 @@ namespace ChallengingTerrariaMod.Content.Systems
             }
         }
 
-        private void UpdateRest(RestPlayer restPlayer, int _sleepPerSecond, int _sleepPerSecondAccelerated)
+        private void UpdateRest(RestPlayer restPlayer, float _sleepPerSecond, float _sleepPerSecondAccelerated)
         {
             if (Main.dayRate > 1)
             {
@@ -102,32 +103,41 @@ namespace ChallengingTerrariaMod.Content.Systems
                     if (player.active && !player.dead && !player.ghost)
                     {
                         RestPlayer restPlayer = player.GetModPlayer<RestPlayer>();
+                        float RestMultiplier = ModContent.GetInstance<MeuModConfig>().RestMultiplier;
+                        float _sleepPerSecond = sleepPerSecond * RestMultiplier;
+                        float _sleepPerSecondAccelerated = sleepPerSecondAccelerated * RestMultiplier;
+
                         if (restPlayer == null) continue;
 
                         if (player.sleeping.isSleeping)
                         {
                             if (player.townNPCs < 2)
                             {
-                                UpdateRest(restPlayer, sleepPerSecond / 2, sleepPerSecondAccelerated / 2);
+                                UpdateRest(restPlayer, sleepPerSecond / 4, sleepPerSecondAccelerated / 2);
                                 player.AddBuff(ModContent.BuffType<BadRest>(), 60);
                             }
                             else
                             {
                                 UpdateRest(restPlayer, sleepPerSecond, sleepPerSecondAccelerated);
-                            }  
+                            }
                             restPlayer.timeNoSleep -= 30;
-                            restPlayer.timeNoSleep = Utils.Clamp(restPlayer.timeNoSleep, 0, 1200);  
+                            restPlayer.timeNoSleep = Utils.Clamp(restPlayer.timeNoSleep, 0, 1200);
                         }
                         else if (player.HasBuff(ModContent.BuffType<SleepDeprived>()) || !Main.dayTime)
                         {
                             if (player.HasBuff(ModContent.BuffType<Cafeinated>()))
                             {
-                                restPlayer.CurrentRest -= sleepPerSecond / 2;
+                                restPlayer.CurrentRest -= _sleepPerSecond / 2;
                             }
                             else
                             {
-                                restPlayer.CurrentRest -= sleepPerSecond;
+                                restPlayer.CurrentRest -= _sleepPerSecond;
                             }
+                        }
+                        else if (player.sitting.isSitting)
+                        {
+                            restPlayer.CurrentRest += sleepPerSecond / 4;
+                            player.AddBuff(ModContent.BuffType<BadRest>(), 60);
                         }
                         restPlayer.CurrentRest = Utils.Clamp(restPlayer.CurrentRest, minSleep, maxSleep);
                     }

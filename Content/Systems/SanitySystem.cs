@@ -9,6 +9,7 @@ using Terraria.Localization;
 using ChallengingTerrariaMod.Content.Systems.UI;
 using System;
 using ChallengingTerrariaMod.Content.Buffs;
+using ChallengingTerrariaMod.Content.ModConfigs;
 
 namespace ChallengingTerrariaMod.Content.Systems
 {
@@ -99,15 +100,14 @@ namespace ChallengingTerrariaMod.Content.Systems
                     if (player.active && !player.dead && !player.ghost)
                     {
                         SanityPlayer sanityPlayer = player.GetModPlayer<SanityPlayer>();
-                        if (sanityPlayer == null) continue;
-
+                        float SanityMultiplier = ModContent.GetInstance<MeuModConfig>().sanityMultiplier;
 
                         // Sanity logic
                         if (!player.HasBuff(ModContent.BuffType<ArmoredMind>()))
                         {
                             if (player.ZoneDungeon || player.ZoneUnderworldHeight || player.ZoneCrimson || player.ZoneCorrupt) // If the player is in Dungeon, Underworld or corruption/crimson, he loses sanity
                             {
-                                sanityPlayer.CurrentSanity -= 7.5f;
+                                sanityPlayer.CurrentSanity -= 7.5f * SanityMultiplier;
                             }
                             if (player.townNPCs > 2) // If the player is in a town, he gains sanity.
                             {
@@ -115,14 +115,14 @@ namespace ChallengingTerrariaMod.Content.Systems
                             }
                             if (player.statLife <= (player.statLifeMax / 2)) // If player has less than half of his max health, he loses sanity.
                             {
-                                sanityPlayer.CurrentSanity -= 9;
+                                sanityPlayer.CurrentSanity -= 9 * SanityMultiplier;
                             }
                         }
                         else
                         {
                             if (player.ZoneDungeon || player.ZoneUnderworldHeight || player.ZoneCrimson || player.ZoneCorrupt) // If the player is in Dungeon, Underworld or corruption/crimson, he loses sanity
                             {
-                                sanityPlayer.CurrentSanity -= 5f;
+                                sanityPlayer.CurrentSanity -= 5f * SanityMultiplier;
                             }
                             if (player.townNPCs > 2) // If the player is in a town, he gains sanity.
                             {
@@ -130,7 +130,7 @@ namespace ChallengingTerrariaMod.Content.Systems
                             }
                             if (player.statLife <= (player.statLifeMax / 2)) // If player has less than half of his max health, he loses sanity.
                             {
-                                sanityPlayer.CurrentSanity -= 6f;
+                                sanityPlayer.CurrentSanity -= 6f * SanityMultiplier;
                             }
                         }
                         sanityPlayer.CurrentSanity += 3; // This is the normalization factor. It raises the sanity if the player is not under danger.

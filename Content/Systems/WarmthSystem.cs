@@ -13,6 +13,7 @@ using ChallengingTerrariaMod.Content.Systems.UI;
 using Terraria.DataStructures;
 using System;
 using ChallengingTerrariaMod.Content.Buffs; // Esta linha é necessária novamente para verificar buffs personalizados
+using ChallengingTerrariaMod.Content.ModConfigs;
 
 namespace ChallengingTerrariaMod.Content.Systems
 {
@@ -107,10 +108,11 @@ namespace ChallengingTerrariaMod.Content.Systems
                 {
                     if (player.active && !player.dead && !player.ghost)
                     {
+                        float warmthMultiplier = ModContent.GetInstance<MeuModConfig>().warmthMultiplier;
                         WarmthPlayer warmthPlayer = player.GetModPlayer<WarmthPlayer>();
                         if (warmthPlayer == null) continue;
 
-                        int currentTemperatureIncrement = CalculateTemperatureIncrement(player, warmthPlayer.CurrentTemperature);
+                        int currentTemperatureIncrement = CalculateTemperatureIncrement(player, warmthPlayer.CurrentTemperature) * (int)warmthMultiplier;
                         
                         // Aplica o incremento calculado das fontes ambientais/de buff
                         warmthPlayer.CurrentTemperature += currentTemperatureIncrement;

@@ -74,24 +74,22 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
                         
                         if (_area.IsMouseHovering)
                         {
-
                                 if (restPlayer.CurrentRest <= restPlayer.exhaustedThreshold)
                                 {
-                                        Main.instance.MouseText("Rest Meter\nYou're exhausted\nSleep a little!");
+                                        Main.instance.MouseText("Rest Meter\nYou're exhausted\nRest a little!");
                                 }
                                 else if (restPlayer.CurrentRest <= restPlayer.sleepyThreshold)
                                 {
-                                        Main.instance.MouseText("Rest Meter\nYou're sleepy\nSleep a little!");
+                                        Main.instance.MouseText("Rest Meter\nYou're sleepy\nRest a little!");
                                 }
                                 else if (restPlayer.CurrentRest <= restPlayer.tiredThreshold)
                                 {
-                                        Main.instance.MouseText("Rest Meter\nYou're tired\nSleep a little!");
+                                        Main.instance.MouseText("Rest Meter\nYou're tired\nRest a little!");
                                 }
                                 else 
                                 {
                                         Main.instance.MouseText("Rest Meter\nYou're rested");
                                 }
-                              
                         }
                 }
         }

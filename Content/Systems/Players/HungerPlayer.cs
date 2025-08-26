@@ -6,6 +6,7 @@ using Terraria.ID;
 using ChallengingTerrariaMod.Content.Buffs;
 using Terraria.DataStructures;
 using Microsoft.Xna.Framework;
+using ChallengingTerrariaMod.Content.ModConfigs;
 
 namespace ChallengingTerrariaMod.Content.Systems.Players
 {
@@ -46,17 +47,17 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
 
                 if (Main.GameUpdateCount % HungerSystem.HungerTickRate == 0)
                 {
-                    
-                    CurrentHunger -= HungerSystem.HungerDecrementIdle;
+                    float HungerMultiplier = ModContent.GetInstance<MeuModConfig>().HungerMultiplier;
+    
                     if (Player.velocity.X != 0 || Player.velocity.Y != 0)
                     {
                         if (Player.HasBuff(ModContent.BuffType<Nourished>()))
                         {
-                            CurrentHunger -= HungerSystem.HungerDecrementIdle;
+                            CurrentHunger -= HungerSystem.HungerDecrementIdle * HungerMultiplier;
                         }
                         else
                         {
-                            CurrentHunger -= HungerSystem.HungerDecrementMoving;
+                            CurrentHunger -= HungerSystem.HungerDecrementMoving * HungerMultiplier;
                         }
                     }
                     
