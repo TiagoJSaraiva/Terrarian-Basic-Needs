@@ -107,7 +107,7 @@ namespace ChallengingTerrariaMod.Content.Systems
                         {
                             if (player.ZoneDungeon || player.ZoneUnderworldHeight || player.ZoneCrimson || player.ZoneCorrupt) // If the player is in Dungeon, Underworld or corruption/crimson, he loses sanity
                             {
-                                sanityPlayer.CurrentSanity -= 5f * SanityMultiplier;
+                                sanityPlayer.CurrentSanity -= 4f * SanityMultiplier;
                             }
                             if (player.townNPCs > 2) // If the player is in a town, he gains sanity.
                             {
@@ -116,6 +116,10 @@ namespace ChallengingTerrariaMod.Content.Systems
                             if (player.statLife <= (player.statLifeMax / 2)) // If player has less than half of his max health, he loses sanity.
                             {
                                 sanityPlayer.CurrentSanity -= 9 * SanityMultiplier;
+                            }
+                            if (Main.eclipse || Main.bloodMoon) // If there is a blood moon or an eclipse, the player loses sanity.
+                            {
+                                sanityPlayer.CurrentSanity -= 7f * SanityMultiplier;
                             }
                         }
                         else
@@ -132,9 +136,16 @@ namespace ChallengingTerrariaMod.Content.Systems
                             {
                                 sanityPlayer.CurrentSanity -= 6f * SanityMultiplier;
                             }
+                            if (Main.eclipse || Main.bloodMoon) // If there is a blood moon or an eclipse, the player loses sanity.
+                            {
+                                sanityPlayer.CurrentSanity -= 3.5f * SanityMultiplier;
+                            }
                         }
-                        sanityPlayer.CurrentSanity += 3; // This is the normalization factor. It raises the sanity if the player is not under danger.
-
+                        if (player.ZoneOverworldHeight) // If the player is in the overworld, he gains sanity.
+                        {
+                            sanityPlayer.CurrentSanity += 2;
+                        }
+                
                         sanityPlayer.CurrentSanity = Utils.Clamp(sanityPlayer.CurrentSanity, 0, 1200);
                     }
                 }
