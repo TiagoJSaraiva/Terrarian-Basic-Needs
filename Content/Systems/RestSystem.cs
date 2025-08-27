@@ -123,6 +123,11 @@ namespace ChallengingTerrariaMod.Content.Systems
                             restPlayer.timeNoSleep -= 30;
                             restPlayer.timeNoSleep = Utils.Clamp(restPlayer.timeNoSleep, 0, 1200);
                         }
+                        else if (player.sitting.isSitting)
+                        {
+                            restPlayer.CurrentRest += sleepPerSecond / 4;
+                            player.AddBuff(ModContent.BuffType<BadRest>(), 60);
+                        }
                         else if (player.HasBuff(ModContent.BuffType<SleepDeprived>()) || !Main.dayTime)
                         {
                             if (player.HasBuff(ModContent.BuffType<Cafeinated>()))
@@ -133,11 +138,6 @@ namespace ChallengingTerrariaMod.Content.Systems
                             {
                                 restPlayer.CurrentRest -= _sleepPerSecond;
                             }
-                        }
-                        else if (player.sitting.isSitting)
-                        {
-                            restPlayer.CurrentRest += sleepPerSecond / 4;
-                            player.AddBuff(ModContent.BuffType<BadRest>(), 60);
                         }
                         restPlayer.CurrentRest = Utils.Clamp(restPlayer.CurrentRest, minSleep, maxSleep);
                     }

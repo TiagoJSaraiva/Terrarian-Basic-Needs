@@ -107,7 +107,7 @@ namespace ChallengingTerrariaMod.Content.Systems
                         {
                             if (player.ZoneDungeon || player.ZoneUnderworldHeight || player.ZoneCrimson || player.ZoneCorrupt) // If the player is in Dungeon, Underworld or corruption/crimson, he loses sanity
                             {
-                                sanityPlayer.CurrentSanity -= 7.5f * SanityMultiplier;
+                                sanityPlayer.CurrentSanity -= 5f * SanityMultiplier;
                             }
                             if (player.townNPCs > 2) // If the player is in a town, he gains sanity.
                             {
@@ -122,7 +122,7 @@ namespace ChallengingTerrariaMod.Content.Systems
                         {
                             if (player.ZoneDungeon || player.ZoneUnderworldHeight || player.ZoneCrimson || player.ZoneCorrupt) // If the player is in Dungeon, Underworld or corruption/crimson, he loses sanity
                             {
-                                sanityPlayer.CurrentSanity -= 5f * SanityMultiplier;
+                                sanityPlayer.CurrentSanity -= 2.5f * SanityMultiplier;
                             }
                             if (player.townNPCs > 2) // If the player is in a town, he gains sanity.
                             {

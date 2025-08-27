@@ -115,6 +115,17 @@ namespace ChallengingTerrariaMod.Content.GlobalChanges
             }
         }
 
+        public override void ModifyShop(NPCShop shop)
+        {
+            if (shop.NpcType == NPCID.ArmsDealer)
+            {  
+                shop.Add(new Item(ModContent.ItemType<Cigarette>())
+                {
+                    shopCustomPrice = Item.buyPrice(gold: 3, silver: 50)
+                }); 
+            }
+        }
+
         public override void SetupTravelShop(int[] shop, ref int nextSlot)
         {
             int Item1;
@@ -179,7 +190,7 @@ namespace ChallengingTerrariaMod.Content.GlobalChanges
                     case 5:
                         shop[nextSlot] = ModContent.ItemType<FoodPill>();
                         nextSlot++; break;
-                    case 6: 
+                    case 6:
                         shop[nextSlot] = ModContent.ItemType<AdrenalineInjection>();
                         nextSlot++; break;
                 }
@@ -201,7 +212,7 @@ namespace ChallengingTerrariaMod.Content.GlobalChanges
                     case 5:
                         shop[nextSlot] = ModContent.ItemType<FoodPill>();
                         nextSlot++; break;
-                    case 6: 
+                    case 6:
                         shop[nextSlot] = ModContent.ItemType<AdrenalineInjection>();
                         nextSlot++; break;
                 }

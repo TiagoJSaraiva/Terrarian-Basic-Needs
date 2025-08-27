@@ -76,7 +76,7 @@ Buffs: {
 
 	Terrified: {
 		DisplayName: Terrified
-		Description: An uncontrollable fear is taking over your brain. Great reduction to damage and crit chance. When attacked, you character has a small chance of running away from the enemies. Also, be careful, staying in the dark for too long can be dangerous.
+		Description: An uncontrollable fear is taking over your brain. Great reduction to damage and crit chance. When attacked, you character has a small chance of running away from the enemies.
 	}
 
 	VeryCold: {
@@ -90,12 +90,12 @@ Buffs: {
 	}
 
 	Tired: {
-		Description: You are getting tired. Minor decrease in Mana and Hp stats.
+		Description: You are getting tired. Minor decrease in Mana and Hp stats. Sleep or sit on a chair to rest!
 		DisplayName: Tired
 	}
 
 	Sleepy: {
-		Description: You could use some rest. Medium decrease in Mana and Hp stats.
+		Description: You could use some rest. Medium decrease in Mana and Hp stats. Sleep or sit on a chair to rest!
 		DisplayName: Sleepy
 	}
 
@@ -105,7 +105,7 @@ Buffs: {
 	}
 
 	Exhausted: {
-		Description: You really needs to sleep. Great decrease in Mana and Hp stats. You may also randomly get the Confused debuff.
+		Description: You really needs to sleep. Great decrease in Mana and Hp stats. You may also randomly get the Confused debuff. Sleep or sit on a chair to rest!
 		DisplayName: Exhausted
 	}
 

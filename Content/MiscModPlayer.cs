@@ -12,15 +12,10 @@ namespace ChallengingTerrariaMod.Content
     {
         List<Item> items = new List<Item>();
 
-        Item coffe = new Item();
-        coffe.SetDefaults(ModContent.ItemType<CaffeinePill>());
-        coffe.stack = 1;
-        items.Add(coffe);
-
-        Item pocao = new Item();
-        pocao.SetDefaults(ItemID.Apple);
-        pocao.stack = 10;
-        items.Add(pocao);
+        Item apple = new Item();
+        apple.SetDefaults(ItemID.Apple);
+        apple.stack = 5;
+        items.Add(apple);
 
         return items; // Retorna a lista de itens
     }
