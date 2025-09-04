@@ -108,7 +108,7 @@ namespace ChallengingTerrariaMod.Content.Systems
                 {
                     if (player.active && !player.dead && !player.ghost)
                     {
-                        float warmthMultiplier = ModContent.GetInstance<MeuModConfig>().warmthMultiplier;
+                        float warmthMultiplier = ModContent.GetInstance<ModConfigServer>().warmthMultiplier;
                         WarmthPlayer warmthPlayer = player.GetModPlayer<WarmthPlayer>();
                         if (warmthPlayer == null) continue;
 
@@ -208,7 +208,7 @@ namespace ChallengingTerrariaMod.Content.Systems
                     {
                         inWarmEnvironment = true;
                         break;
-                    }
+                    } 
                 }
                 if (inWarmEnvironment)
                 {
@@ -233,7 +233,7 @@ namespace ChallengingTerrariaMod.Content.Systems
             }
             if (player.ZoneSkyHeight)
             {
-                increments.Add(40);
+                increments.Add(30);
                 inWarmEnvironment = true;
             }
         

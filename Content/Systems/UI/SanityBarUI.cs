@@ -10,6 +10,7 @@ using ChallengingTerrariaMod.Content.Systems.Players;
 using System; 
 using ReLogic.Content;
 using Terraria.GameContent;
+using ChallengingTerrariaMod.Content.ModConfigs;
 
 namespace ChallengingTerrariaMod.Content.Systems.UI
 {
@@ -87,12 +88,19 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
                                 {
                                         Main.instance.MouseText("Sanity meter\nYou're stressed\nto increase your sanity level, go to a safe place!");
                                 }
-                                else 
+                                else
                                 {
                                         Main.instance.MouseText("Sanity meter\nYou're well");
                                 }
-                              
+
                         }
+                        
+                        int X = 750;
+                        int Y = 20;
+                        ModConfigClient.setLocalization(ref X, ref Y);
+
+                        _area.Left.Set(X, 0f);
+                        _area.Top.Set(Y, 0f);
                         
                 }
         }

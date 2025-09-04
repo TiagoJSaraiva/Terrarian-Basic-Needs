@@ -29,7 +29,7 @@ namespace ChallengingTerrariaMod.Content.Consumables
             Item.useStyle = ItemUseStyleID.EatFood;
             Item.buffType = ModContent.BuffType<Nourished>();
             Item.consumable = true;
-            Item.buffTime = 60 * 120;
+            Item.buffTime = 240 * 60;
             Item.maxStack = Item.CommonMaxStack;
             Item.value = Item.buyPrice(silver: 50);
         }

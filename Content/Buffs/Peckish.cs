@@ -1,5 +1,4 @@
-﻿// ChallengingTerrariaMod/Content/Buffs/Peckish.cs
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
 

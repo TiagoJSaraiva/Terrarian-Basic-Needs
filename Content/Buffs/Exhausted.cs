@@ -1,11 +1,8 @@
-﻿// Em ChallengingTerrariaMod/Content/Buffs/Exhausted.cs
-
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
-using Terraria.Localization;
 using Terraria.ID;
 using ChallengingTerrariaMod.Content.Systems;
-using ChallengingTerrariaMod.Content.Systems.Players; // Para BuffID.Confused, BuffID.Drunk
+
 
 namespace ChallengingTerrariaMod.Content.Buffs
 {

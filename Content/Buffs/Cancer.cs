@@ -1,4 +1,3 @@
-// ChallengingTerrariaMod/Content/Buffs/Peckish.cs
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
@@ -21,7 +20,7 @@ namespace ChallengingTerrariaMod.Content.Buffs
             player.endurance -= 0.50f;
             player.pickSpeed += 0.90f;
             player.moveSpeed -= 0.95f;
-            player.GetDamage(DamageClass.Generic) -= 0.50f; // 20% reduction in player damage
+            player.GetDamage(DamageClass.Generic) -= 0.50f; 
         }
     }
 }

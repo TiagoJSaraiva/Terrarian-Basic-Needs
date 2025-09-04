@@ -1,5 +1,3 @@
-// Em ChallengingTerrariaMod/Content/Systems/UI/WarmthMeterUI.cs
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -10,6 +8,7 @@ using ReLogic.Content;
 using ChallengingTerrariaMod.Content.Systems.Players;
 using ChallengingTerrariaMod.Content.Systems;
 using System;
+using ChallengingTerrariaMod.Content.ModConfigs;
 
 namespace ChallengingTerrariaMod.Content.Systems.UI
 {
@@ -25,7 +24,7 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
         private const int TemperatureInterval = 52; 
 
         private int _updateSpriteTickCounter;
-        private const int SPRITE_UPDATE_RATE = 60; // Atualiza a cada 60 ticks (1 segundo)
+        private const int SPRITE_UPDATE_RATE = 60;
 
         public override void OnInitialize()
         {
@@ -48,8 +47,7 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
             warmthMeterImage.SetPadding(0);
             Append(warmthMeterImage);
 
-            // ALTERAÇÃO AQUI: Inicializa _updateSpriteTickCounter para garantir a atualização no primeiro tick
-            _updateSpriteTickCounter = SPRITE_UPDATE_RATE; // Ou SPRITE_UPDATE_RATE - 1, dependendo da ordem exata de Update e incremento. Com SPRITE_UPDATE_RATE, ele roda no primeiro tick.
+            _updateSpriteTickCounter = SPRITE_UPDATE_RATE; 
         }
 
         public override void Update(GameTime gameTime)
@@ -63,7 +61,7 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
 
             if (_updateSpriteTickCounter >= SPRITE_UPDATE_RATE)
             {
-                _updateSpriteTickCounter = 0; // Reseta o contador para começar a contagem de 60 ticks
+                _updateSpriteTickCounter = 0; 
 
                 int currentTemperature = warmthPlayer.CurrentTemperature;
                 int lastTemperatureChange = warmthPlayer.LastTemperatureChange;
@@ -82,11 +80,11 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
 
                     int calculatedSpriteIndex;
 
-                    if (currentTemperature > WarmthSystem.ComfortableTemperature) // Temperatura está alta (quente)
+                    if (currentTemperature > WarmthSystem.ComfortableTemperature) 
                     {
                         calculatedSpriteIndex = 19 - (steps - 1);
                     }
-                    else // Temperatura está baixa (frio)
+                    else 
                     {
                         calculatedSpriteIndex = 19 + (steps - 1);
                     }
@@ -115,7 +113,7 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
                 }
                 warmthMeterImage.SetImage(newTextureAsset.Value);
             }
-            
+
             if (warmthMeterImage.IsMouseHovering)
             {
                 if (warmthPlayer.CurrentTemperature <= 200)
@@ -147,6 +145,13 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
                     Main.instance.MouseText("Warmth Meter\nYou're confortable");
                 }
             }
+            
+            int X = 700;
+            int Y = 20;
+            ModConfigClient.setLocalization(ref X, ref Y);
+
+            warmthMeterImage.Left.Set(X, 0f);
+            warmthMeterImage.Top.Set(Y, 0f);
         }
     }
 }

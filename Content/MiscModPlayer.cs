@@ -17,7 +17,7 @@ namespace ChallengingTerrariaMod.Content
         apple.stack = 5;
         items.Add(apple);
 
-        return items; // Retorna a lista de itens
+        return items; 
     }
 }
 }

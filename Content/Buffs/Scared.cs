@@ -1,4 +1,3 @@
-// ChallengingTerrariaMod/Content/Buffs/Stuffed.cs
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;

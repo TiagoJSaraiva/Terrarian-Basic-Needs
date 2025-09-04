@@ -4,9 +4,6 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 using ChallengingTerrariaMod.Content.Buffs;
-using Terraria.Audio;
-using ChallengingTerrariaMod.Content.Projectiles;
-using Terraria.ModLoader.IO;
 
 namespace ChallengingTerrariaMod.Content.Consumables
 {
@@ -18,10 +15,10 @@ namespace ChallengingTerrariaMod.Content.Consumables
 			Main.RegisterItemAnimation(Type, new DrawAnimationVertical(int.MaxValue, 3));
             ItemID.Sets.FoodParticleColors[Item.type] = new Color[]
             {
-                new Color(150, 93, 95),  // Marrom avermelhado
-                new Color(192, 114, 76), // Marrom alaranjado
-                new Color(140, 80, 80),  // Marrom escuro
-                new Color(200, 120, 80), // Marrom claro
+                new Color(150, 93, 95),  
+                new Color(192, 114, 76), 
+                new Color(140, 80, 80), 
+                new Color(200, 120, 80), 
             };
 			ItemID.Sets.IsFood[Type] = true; 
 		}
@@ -36,7 +33,7 @@ namespace ChallengingTerrariaMod.Content.Consumables
             Item.useStyle = ItemUseStyleID.EatFood;
             Item.buffType = ModContent.BuffType<Nourished>();
             Item.consumable = true;
-            Item.buffTime = 60 * 360;
+            Item.buffTime = 60 * 480;
             Item.maxStack = Item.CommonMaxStack;
             Item.value = Item.buyPrice(gold: 1);
         }

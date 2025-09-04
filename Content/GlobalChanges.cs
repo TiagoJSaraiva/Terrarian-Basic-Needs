@@ -2,12 +2,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.ID;
-using ChallengingTerrariaMod.Content.Projectiles;
 using ChallengingTerrariaMod.Content.Buffs;
-using Terraria.DataStructures;
-using Microsoft.Xna.Framework;
-using System;
-using Terraria.GameInput;
 using System.Collections.Generic;
 using Terraria.UI;
 using Terraria.GameContent.ItemDropRules;
@@ -24,7 +19,7 @@ namespace ChallengingTerrariaMod.Content.GlobalChanges
             if (item.type == ItemID.CoffeeCup)
             {
                 item.buffType = ModContent.BuffType<Cafeinated>();
-                item.buffTime = 120 * 60;
+                item.buffTime = 240 * 60;
                 item.rare = ItemRarityID.Green;
                 item.consumable = true;
                 item.value = Item.buyPrice(silver: 50);

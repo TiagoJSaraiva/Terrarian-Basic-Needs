@@ -100,7 +100,7 @@ namespace ChallengingTerrariaMod.Content.Systems
                     if (player.active && !player.dead && !player.ghost)
                     {
                         SanityPlayer sanityPlayer = player.GetModPlayer<SanityPlayer>();
-                        float SanityMultiplier = ModContent.GetInstance<MeuModConfig>().sanityMultiplier;
+                        float SanityMultiplier = ModContent.GetInstance<ModConfigServer>().sanityMultiplier;
 
                         // Sanity logic
                         if (!player.HasBuff(ModContent.BuffType<ArmoredMind>()))

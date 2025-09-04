@@ -31,13 +31,12 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
 
         public void FaintedVFXDrawing()
         {
-            if (Main.myPlayer != Player.whoAmI) return; // Só no cliente local
+            if (Main.myPlayer != Player.whoAmI) return; 
 
-            Vector2 spawnPos = Player.Center + new Vector2(0, -40); // Acima da cabeça
+            Vector2 spawnPos = Player.Center + new Vector2(0, -40); 
 
             int type = ModContent.ProjectileType<FaintedVFX>();
 
-            // Garante que só haja 1 projétil do tipo por jogador
             bool alreadyExists = false;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
@@ -46,7 +45,7 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
                 {
                     alreadyExists = true;
                     proj.Center = spawnPos;
-                    proj.timeLeft = 2; // Mantém vivo
+                    proj.timeLeft = 2; 
                 }
             }
 
@@ -107,7 +106,7 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
             }
             else
             {
-                CurrentRest = 0; // Valor padrão se não houver dados salvos
+                CurrentRest = 0; 
             }
             if (tag.ContainsKey("timeNoSleep"))
             {
@@ -115,13 +114,13 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
             }
             else
             {
-                timeNoSleep = 0; // Valor padrão se não houver dados salvos
+                timeNoSleep = 0; 
             }
         }
 
         private void ApplyRestDebuffs()
         {
-            if (timeNoSleep >= 2400) // MUDAR PARA 2400
+            if (timeNoSleep >= 2400) 
             {
                 Main.NewText("Your sleep routine has been terrible. Your body is starting to feel the consequences.", Color.LightBlue);
                 Player.AddBuff(ModContent.BuffType<SleepDeprived>(), 600 * 60);

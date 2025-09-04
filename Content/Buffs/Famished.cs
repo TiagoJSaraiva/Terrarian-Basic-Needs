@@ -1,8 +1,7 @@
-﻿// ChallengingTerrariaMod/Content/Buffs/Famished.cs
+﻿
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
-using Terraria.DataStructures;
 
 namespace ChallengingTerrariaMod.Content.Buffs
 {

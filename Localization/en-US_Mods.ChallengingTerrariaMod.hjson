@@ -173,7 +173,7 @@ Items: {
 }
 
 Configs: {
-	MeuModConfig: {
+	ModConfigServer: {
 		DisplayName: Terrarian Basic Needs - Configurations
 
 		HungerMultiplier: {
@@ -194,6 +194,20 @@ Configs: {
 		warmthMultiplier: {
 			Label: Warmth Multiplier
 			Tooltip: Adjusts the warmth rate.
+		}
+	}
+
+	ModConfigClient: {
+		DisplayName: Meter's Position
+
+		localizationX: {
+			Label: X Offset
+			Tooltip: Adjusts the horizontal position of the meter on the screen. Goes from 0 (default) up to 1200
+		}
+
+		localizationY: {
+			Label: Y Offset
+			Tooltip: Adjusts the vertical position of the meter on the screen. Goes from 0 (default) up to 1200
 		}
 	}
 }

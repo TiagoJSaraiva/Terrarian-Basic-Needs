@@ -47,7 +47,7 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
 
                 if (Main.GameUpdateCount % HungerSystem.HungerTickRate == 0)
                 {
-                    float HungerMultiplier = ModContent.GetInstance<MeuModConfig>().HungerMultiplier;
+                    float HungerMultiplier = ModContent.GetInstance<ModConfigServer>().HungerMultiplier;
     
                     if (Player.velocity.X != 0 || Player.velocity.Y != 0)
                     {
@@ -117,7 +117,7 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
 
                 int hungerRestored = 0;
 
-                if (Player.HasBuff(BuffID.WellFed3) && Player.buffTime[Player.FindBuffIndex(BuffID.WellFed3)] > 1) // >1 para evitar buffs recém removidos
+                if (Player.HasBuff(BuffID.WellFed3) && Player.buffTime[Player.FindBuffIndex(BuffID.WellFed3)] > 1) 
                 {
                     hungerRestored = 350;
                 }

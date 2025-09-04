@@ -51,7 +51,7 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
 
         public override void PostUpdateBuffs()
         {
-            if (Main.GameUpdateCount % RestSystem.restUpdateRate == 0) // Atualiza 1 vez por segundo
+            if (Main.GameUpdateCount % RestSystem.restUpdateRate == 0) 
             {
                 if (Player.active && !Player.dead && !Player.ghost)
                 {
@@ -73,7 +73,7 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
             }
             else
             {
-                CurrentSanity = 0; // Valor padrão se não houver dados salvos
+                CurrentSanity = 0; 
             }
         }
 

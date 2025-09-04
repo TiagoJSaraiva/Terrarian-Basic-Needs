@@ -1,5 +1,4 @@
-﻿// Em ChallengingTerrariaMod/Content/Buffs/Freezing.cs
-
+﻿
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
@@ -27,10 +26,9 @@ namespace ChallengingTerrariaMod.Content.Buffs
                 player.AddBuff(BuffID.Frostburn, 7 * 60);
             }
             
-            // 15% de chance de contrair o debuff frozen repentinamente a cada 60 ticks
             if (Main.GameUpdateCount % 60 == 0 && Main.rand.NextFloat() < 0.15f)
             {
-                player.AddBuff(BuffID.Frozen, 120); // 2 segundos de Frozen (buff vanilla)
+                player.AddBuff(BuffID.Frozen, 120); 
             }
         }
     }

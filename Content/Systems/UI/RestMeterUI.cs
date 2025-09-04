@@ -10,6 +10,7 @@ using ChallengingTerrariaMod.Content.Systems.Players;
 using System; 
 using ReLogic.Content;
 using Terraria.GameContent;
+using ChallengingTerrariaMod.Content.ModConfigs;
 
 namespace ChallengingTerrariaMod.Content.Systems.UI
 {
@@ -71,7 +72,7 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
                         Texture2D newSpriteTexture = _restMeterSprites[spriteIndex].Value;
 
                         _restMeterImage.SetImage(newSpriteTexture);
-                        
+
                         if (_area.IsMouseHovering)
                         {
                                 if (restPlayer.CurrentRest <= restPlayer.exhaustedThreshold)
@@ -86,11 +87,18 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
                                 {
                                         Main.instance.MouseText("Rest Meter\nYou're tired\nRest a little!");
                                 }
-                                else 
+                                else
                                 {
                                         Main.instance.MouseText("Rest Meter\nYou're rested");
                                 }
                         }
+                        
+                        int X = 800;
+                        int Y = 20;
+                        ModConfigClient.setLocalization(ref X, ref Y);
+
+                        _area.Left.Set(X, 0f);
+                        _area.Top.Set(Y, 0f);
                 }
         }
 }

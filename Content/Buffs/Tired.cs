@@ -1,5 +1,4 @@
-﻿// Em ChallengingTerrariaMod/Content/Buffs/Tired.cs
-
+﻿
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.Localization;

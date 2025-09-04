@@ -7,22 +7,28 @@ using Terraria.ModLoader;
 using System;
 using ReLogic.Content;
 using ChallengingTerrariaMod.Content.Systems.Players;
+using ChallengingTerrariaMod.Content.ModConfigs;
 
 namespace ChallengingTerrariaMod.Content.Systems.UI
 {
     public class HungerBarUI : UIState
     {
         private UIElement area;
-        private UIImage hungerMeterImage; // A imagem que mostra o preenchimento da fome
+        private UIImage hungerMeterImage;
 
         private Asset<Texture2D>[] hungerFillTextures;
         private const int TotalSprites = 15; 
 
+        private int localizationX = 850;
+        private int localizationY = 20;
+
         public override void OnInitialize()
         {
+            ModConfigClient.setLocalization(ref localizationX, ref localizationY);
+
             area = new UIElement();
-            area.Left.Set(850f, 0f);
-            area.Top.Set(20f, 0f);
+            area.Left.Set(localizationX, 0f);
+            area.Top.Set(localizationY, 0f);
             area.Width.Set(30, 0f);
             area.Height.Set(50, 0f);
             Append(area);
@@ -34,7 +40,6 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
                 hungerFillTextures[i] = ModContent.Request<Texture2D>(texturePath, AssetRequestMode.ImmediateLoad);
             }
 
-            // Inicializa a UIImage com a imagem apropriada para a fome inicial do jogador (cheio)
             hungerMeterImage = new UIImage(hungerFillTextures[GetSpriteIndex(HungerSystem.MaxHungerNormal)]);
             hungerMeterImage.Left.Set(0, 0f);
             hungerMeterImage.Top.Set(0, 0f);
@@ -43,7 +48,6 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
             area.Append(hungerMeterImage);
         }
 
-        // Este método é chamado a cada frame do jogo para atualizar a UI
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -55,7 +59,7 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
 
                 hungerMeterImage.SetImage(hungerFillTextures[newSpriteIndex]);
             }
-            
+
             if (area.IsMouseHovering)
             {
                 if (hungerPlayer.CurrentHunger >= HungerSystem.MaxHungerDebuffThreshold_Bloated)
@@ -87,10 +91,17 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
                     Main.instance.MouseText("Hunger Meter\nYou're well fed");
                 }
             }
+            base.Update(gameTime);
+
+            int X = 850;
+            int Y = 20;
+            ModConfigClient.setLocalization(ref X, ref Y);
+
+            area.Left.Set(X, 0f);
+            area.Top.Set(Y, 0f);
         }
         private int GetSpriteIndex(float hungerValue)
         {
-            // Define o sprite base para o estado "normal" (1100 de fome)
             const int NormalHungerSpriteIndex = 11; 
             const float BaseHungerValue = HungerSystem.MaxHungerNormal; 
 
@@ -98,20 +109,15 @@ namespace ChallengingTerrariaMod.Content.Systems.UI
 
             if (hungerValue > BaseHungerValue)
             {
-                // Calcula quantos pontos de fome estão acima do normal
                 float hungerAboveNormal = hungerValue - BaseHungerValue;
-                // Cada 100 pontos acima de BaseHungerValue incrementa 1 sprite
                 int spritesIncrement = (int)Math.Floor(hungerAboveNormal / 100f);
 
                 calculatedSpriteIndex = NormalHungerSpriteIndex + spritesIncrement;
             }
-            // Lógica para valores ABAIXO de MaxHungerNormal (1100)
             else 
             {
-                // Calcula quantos pontos de fome estão abaixo do normal
                 float hungerBelowNormal = BaseHungerValue - hungerValue;
                 int spritesDecrement;
-                // Cada 20 pontos abaixo de BaseHungerValue decrementa 1 sprite
                 
                 spritesDecrement = (int)Math.Floor(hungerBelowNormal / 100f);
             

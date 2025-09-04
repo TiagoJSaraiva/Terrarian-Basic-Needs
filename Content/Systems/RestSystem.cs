@@ -103,7 +103,7 @@ namespace ChallengingTerrariaMod.Content.Systems
                     if (player.active && !player.dead && !player.ghost)
                     {
                         RestPlayer restPlayer = player.GetModPlayer<RestPlayer>();
-                        float RestMultiplier = ModContent.GetInstance<MeuModConfig>().RestMultiplier;
+                        float RestMultiplier = ModContent.GetInstance<ModConfigServer>().RestMultiplier;
                         float _sleepPerSecond = sleepPerSecond * RestMultiplier;
                         float _sleepPerSecondAccelerated = sleepPerSecondAccelerated * RestMultiplier;
 

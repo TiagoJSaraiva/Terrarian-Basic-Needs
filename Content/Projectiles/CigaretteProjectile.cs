@@ -1,10 +1,6 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
-using Terraria.GameContent;
-using ChallengingTerrariaMod.Content.Buffs;
 
 namespace ChallengingTerrariaMod.Content.Projectiles
 {
@@ -25,7 +21,7 @@ namespace ChallengingTerrariaMod.Content.Projectiles
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
-            Projectile.timeLeft = 2; // mantido sempre vivo
+            Projectile.timeLeft = 2; 
         }
 
         public override void AI()

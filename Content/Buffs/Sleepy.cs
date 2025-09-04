@@ -1,5 +1,4 @@
-﻿// Em ChallengingTerrariaMod/Content/Buffs/Sleepy.cs
-
+﻿
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.Localization;

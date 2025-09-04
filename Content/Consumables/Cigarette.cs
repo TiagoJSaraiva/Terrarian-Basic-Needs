@@ -33,12 +33,12 @@ namespace ChallengingTerrariaMod.Content.Consumables
             Item.value = Item.buyPrice(silver: 50);
             Item.noUseGraphic = true;
 
-            Item.buffTime = 120 * 60;
+            Item.buffTime = 240 * 60;
         }
 
         public override void OnConsumeItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<ArmoredMind>(), 60 * 120);
+            player.AddBuff(ModContent.BuffType<ArmoredMind>(), 60 * 240);
             CigarettesSmoked++;
             if (CigarettesSmoked >= 50)
             {
@@ -90,7 +90,7 @@ namespace ChallengingTerrariaMod.Content.Consumables
         {
             if (Player.HasBuff(ModContent.BuffType<Cancer>()))
             {
-                price += Item.buyPrice(platinum: 10);
+                price += Item.buyPrice(platinum: 2);
             }
         }
     }

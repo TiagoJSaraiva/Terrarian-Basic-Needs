@@ -1,9 +1,7 @@
-// ChallengingTerrariaMod/Content/Buffs/Nauseous.cs
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ChallengingTerrariaMod.Content.Systems;
-using ChallengingTerrariaMod.Content.Systems.Players;
 using Terraria.DataStructures;
 
 namespace ChallengingTerrariaMod.Content.Buffs

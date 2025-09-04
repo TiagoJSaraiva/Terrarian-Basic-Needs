@@ -1,8 +1,8 @@
-﻿// ChallengingTerrariaMod/Content/Buffs/Full.cs
+﻿
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
-using Terraria.GameContent;
+
 
 namespace ChallengingTerrariaMod.Content.Buffs
 {

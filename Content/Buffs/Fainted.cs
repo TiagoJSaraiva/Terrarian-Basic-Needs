@@ -1,10 +1,7 @@
-﻿// Em ChallengingTerrariaMod/Content/Buffs/Fainted.cs
-
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
-using Terraria.Localization;
 using Terraria.ID;
-using ChallengingTerrariaMod.Content.Systems.Players; // Para acessar RestPlayer
+using ChallengingTerrariaMod.Content.Systems.Players; 
 
 namespace ChallengingTerrariaMod.Content.Buffs
 {

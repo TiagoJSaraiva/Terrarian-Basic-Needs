@@ -1,4 +1,3 @@
-// Em ChallengingTerrariaMod/Content/Systems/Players/WarmthPlayer.cs
 
 using Terraria;
 using Terraria.ModLoader;
@@ -7,7 +6,6 @@ using Microsoft.Xna.Framework;
 using ChallengingTerrariaMod.Content.Systems;
 using Terraria.DataStructures; 
 
-// Adicione esta linha para acessar seus debuffs customizados
 using ChallengingTerrariaMod.Content.Buffs; 
 
 namespace ChallengingTerrariaMod.Content.Systems.Players
