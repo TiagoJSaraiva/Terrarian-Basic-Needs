@@ -6,7 +6,7 @@ Buffs: {
 
 	Famished: {
 		DisplayName: Famished
-		Description: You're so hungry it feels like you stomach is burning! Great decrease on defense stats and mining speed.
+		Description: You're so hungry it feels like your stomach is burning! Great decrease in defensive stats and mining speed.
 	}
 
 	Full: {
@@ -16,22 +16,22 @@ Buffs: {
 
 	Hungry: {
 		DisplayName: Hungry
-		Description: You are hungry! Medium decrease on defensive stats and mining speed.
+		Description: You are hungry! Medium decrease in defensive stats and mining speed.
 	}
 
 	Nauseous: {
 		DisplayName: Nauseous
-		Description: Your are feeling sick and really dont want to eat anything right now.
+		Description: You are feeling sick and really don't want to eat anything right now.
 	}
 
 	Peckish: {
 		DisplayName: Peckish
-		Description: You're not very hungry, but eating something wouldn't be bad. Small decrease on defensive stats and mining speed.
+		Description: You're not very hungry, but eating something wouldn't be bad. Small decrease in defensive stats and mining speed.
 	}
 
 	Starved: {
 		DisplayName: Starved
-		Description: Your body cant take any longe without food! Great decrease on defensive stats and mining speed, and you also lose life per second.
+		Description: Your body can't take it any longer without food! Great decrease in defensive stats and mining speed, and you also lose life per second.
 	}
 
 	ThrowingUp: {
@@ -56,17 +56,17 @@ Buffs: {
 
 	Scorching: {
 		DisplayName: Scorching
-		Description: it feels like your skin is burning and your organs are going to melt down. Great decrease in mining speed and building speed. Every second you have a small chance of getting the On fire debuff and you also take damage continuously.
+		Description: It feels like your skin is burning and your organs are going to melt down. Great decrease in mining speed and building speed. Every second you have a small chance of getting the On fire debuff and you also take damage continuously.
 	}
 
 	Flee: {
 		DisplayName: Flee
-		Description: You're running away from the last enemie that hit you.
+		Description: You're running away from the last enemy that hit you.
 	}
 
 	Scared: {
 		DisplayName: Scared
-		Description: You feel tense and scared. Your surrounds look scarier and darker. Medium reduction to damage and crit chance.
+		Description: You feel tense and scared. Your surroundings look scarier and darker. Medium reduction to damage and crit chance.
 	}
 
 	Stressed: {
@@ -76,7 +76,7 @@ Buffs: {
 
 	Terrified: {
 		DisplayName: Terrified
-		Description: An uncontrollable fear is taking over your brain. Great reduction to damage and crit chance. When attacked, you character has a small chance of running away from the enemies.
+		Description: An uncontrollable fear is taking over your brain. Great reduction to damage and crit chance. When attacked, your character has a small chance of running away from the enemies.
 	}
 
 	VeryCold: {
@@ -86,26 +86,26 @@ Buffs: {
 
 	Warm: {
 		DisplayName: Warm
-		Description: The air around is warm, making you start to sweat. Medium decrease in mining speed and building speed
+		Description: The air around is warm, making you start to sweat. Mining speed and building speed slightly decreased.
 	}
 
 	Tired: {
-		Description: You are getting tired. Minor decrease in Mana and Hp stats. Sleep or sit on a chair to rest!
+		Description: You are getting tired. Minor decrease in max life and mana. Sleep or sit on a chair to rest!
 		DisplayName: Tired
 	}
 
 	Sleepy: {
-		Description: You could use some rest. Medium decrease in Mana and Hp stats. Sleep or sit on a chair to rest!
+		Description: You could use some rest. Medium decrease in max life and mana. Sleep or sit on a chair to rest!
 		DisplayName: Sleepy
 	}
 
 	Fainted: {
-		Description: You are so tired that you fainted. Unable to move or use itens until the debuff ends.
+		Description: You are so tired that you fainted. Unable to move or use items until the debuff ends.
 		DisplayName: Unconscious
 	}
 
 	Exhausted: {
-		Description: You really needs to sleep. Great decrease in Mana and Hp stats. You may also randomly get the Confused debuff. Sleep or sit on a chair to rest!
+		Description: You really need to sleep. Great decrease in max life and mana. You may also randomly get the Confused debuff. Sleep or sit on a chair to rest!
 		DisplayName: Exhausted
 	}
 
@@ -121,12 +121,12 @@ Buffs: {
 
 	Cafeinated: {
 		DisplayName: Cafeinated
-		Description: Your a little too energetic.
+		Description: You're a little too energetic.
 	}
 
 	Cancer: {
 		DisplayName: Cancer
-		Description: It's exactly what you're reading. Get cured by the nurse, for a high price.
+		Description: It's exactly what you're reading. Get cured by the Nurse, for a high price.
 	}
 
 	Nourished: {

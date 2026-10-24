@@ -1,0 +1,283 @@
+Buffs: {
+	Bloated: {
+		DisplayName: Estufado
+		Description: Você comeu demais! Grande redução na velocidade de movimento. E cuidado: se comer mais, pode acabar vomitando.
+	}
+
+	Famished: {
+		DisplayName: Faminto
+		Description: Você está com tanta fome que parece que seu estômago está queimando! Grande redução na defesa e na velocidade de mineração.
+	}
+
+	Full: {
+		DisplayName: Cheio
+		Description: Você comeu um pouco mais do que precisava! Pequena redução na velocidade de movimento.
+	}
+
+	Hungry: {
+		DisplayName: Com fome
+		Description: Você está com fome! Redução média na defesa e na velocidade de mineração.
+	}
+
+	Nauseous: {
+		DisplayName: Enjoado
+		Description: Você está passando mal e não quer comer nada agora.
+	}
+
+	Peckish: {
+		DisplayName: Com fominha
+		Description: Você não está com muita fome, mas comer alguma coisa não seria ruim. Pequena redução na defesa e na velocidade de mineração.
+	}
+
+	Starved: {
+		DisplayName: Morrendo de fome
+		Description: Seu corpo não aguenta mais ficar sem comida! Grande redução na defesa e na velocidade de mineração, e você perde vida a cada segundo.
+	}
+
+	ThrowingUp: {
+		DisplayName: Vomitando
+		Description: Comer demais fez seu corpo colocar tudo para fora.
+	}
+
+	Cold: {
+		DisplayName: Com frio
+		Description: Você está começando a sentir um pouco de frio. Velocidade de mineração e de construção levemente reduzidas.
+	}
+
+	Freezing: {
+		DisplayName: Congelando
+		Description: Seu corpo inteiro parece prestes a congelar. Grande redução na velocidade de mineração e de construção. A cada segundo há uma pequena chance de congelar ou de pegar Queimadura de Gelo.
+	}
+
+	Hot: {
+		DisplayName: Muito calor
+		Description: Você está suando sem parar e superaquecido. Redução média na velocidade de mineração e de construção. A cada segundo há uma pequena chance de pegar fogo.
+	}
+
+	Scorching: {
+		DisplayName: Escaldante
+		Description: Parece que sua pele está queimando e seus órgãos vão derreter. Grande redução na velocidade de mineração e de construção. A cada segundo há uma pequena chance de pegar fogo, e você recebe dano continuamente.
+	}
+
+	Flee: {
+		DisplayName: Fuga
+		Description: Você está fugindo do último inimigo que te atingiu.
+	}
+
+	Scared: {
+		DisplayName: Assustado
+		Description: Você se sente tenso e com medo. O ambiente parece mais assustador e escuro. Redução média no dano e na chance de crítico.
+	}
+
+	Stressed: {
+		DisplayName: Estressado
+		Description: Alguma coisa está te deixando desconfortável. Pequena redução no dano e na chance de crítico.
+	}
+
+	Terrified: {
+		DisplayName: Aterrorizado
+		Description: Um medo incontrolável está tomando conta da sua mente. Grande redução no dano e na chance de crítico. Ao ser atacado, há uma pequena chance de seu personagem fugir dos inimigos.
+	}
+
+	VeryCold: {
+		DisplayName: Muito frio
+		Description: Está tão frio que as pontas dos seus dedos e seu rosto estão dormentes. Redução média na velocidade de mineração e de construção. A cada segundo há uma pequena chance de pegar Queimadura de Gelo.
+	}
+
+	Warm: {
+		DisplayName: Calor
+		Description: O ar ao redor está quente e você começa a suar. Velocidade de mineração e de construção levemente reduzidas.
+	}
+
+	Tired: {
+		DisplayName: Cansado
+		Description: Você está ficando cansado. Pequena redução na vida e mana máximas. Durma ou sente em uma cadeira para descansar!
+	}
+
+	Sleepy: {
+		DisplayName: Sonolento
+		Description: Um descanso cairia bem. Redução média na vida e mana máximas. Durma ou sente em uma cadeira para descansar!
+	}
+
+	Fainted: {
+		DisplayName: Inconsciente
+		Description: Você está tão cansado que desmaiou. Não é possível se mover nem usar itens até o efeito acabar.
+	}
+
+	Exhausted: {
+		DisplayName: Exausto
+		Description: Você precisa muito dormir. Grande redução na vida e mana máximas, e você pode ficar Confuso aleatoriamente. Durma ou sente em uma cadeira para descansar!
+	}
+
+	SleepDeprived: {
+		DisplayName: Privação de sono
+		Description: Você não tem dormido bem ultimamente. Neste estado, você perde descanso aos poucos, mesmo durante o dia.
+	}
+
+	ArmoredMind: {
+		DisplayName: Mente blindada
+		Description: Nada consegue te abalar.
+	}
+
+	Cafeinated: {
+		DisplayName: Cafeinado
+		Description: Você está um pouco agitado demais.
+	}
+
+	Cancer: {
+		DisplayName: Câncer
+		Description: É exatamente o que você está lendo. A Enfermeira pode curar, por um preço alto.
+	}
+
+	Nourished: {
+		DisplayName: Nutrido
+		Description: Seu corpo está bem nutrido.
+	}
+
+	BadRest: {
+		DisplayName: Descanso ruim
+		Description: Não dá para dormir bem em uma cadeira ou longe de uma vila.
+	}
+}
+
+Projectiles: {
+	FaintedVFX.DisplayName: Efeito de desmaio
+	CigaretteProjectile.DisplayName: Cigarro
+}
+
+Items: {
+	Cigarette: {
+		DisplayName: Cigarro
+		Tooltip: Diminui a perda de sanidade. Fume com moderação!
+	}
+
+	Vitamin: {
+		DisplayName: Vitamina
+		Tooltip: Diminui a perda de fome.
+	}
+
+	AdrenalineInjection: {
+		DisplayName: Injeção de Adrenalina
+		Tooltip: Diminui a perda de sanidade.
+	}
+
+	CaffeinePill: {
+		DisplayName: Pílula de Cafeína
+		Tooltip: Diminui a perda de descanso.
+	}
+
+	FoodPill: {
+		DisplayName: Pílula Alimentar
+		Tooltip: Diminui a perda de fome.
+	}
+}
+
+Configs: {
+	ModConfigServer: {
+		DisplayName: Terrarian Basic Needs - Configurações
+
+		HungerMultiplier: {
+			Label: Multiplicador de Fome
+			Tooltip: Multiplica a velocidade com que você fica com fome. Não muda o quanto a comida restaura.
+		}
+
+		RestMultiplier: {
+			Label: Multiplicador de Descanso
+			Tooltip: Multiplica a velocidade com que você fica cansado. Não muda a velocidade de recuperação ao dormir.
+		}
+
+		SanityMultiplier: {
+			Label: Multiplicador de Sanidade
+			Tooltip: Multiplica a velocidade com que você perde sanidade. Não muda a velocidade de recuperação.
+		}
+
+		WarmthMultiplier: {
+			Label: Multiplicador de Temperatura
+			Tooltip: Multiplica a velocidade com que o ambiente muda sua temperatura.
+		}
+	}
+
+	ModConfigClient: {
+		DisplayName: Posição dos Medidores
+
+		OffsetX: {
+			Label: Deslocamento X
+			Tooltip: Move os medidores na horizontal. Vai de 0 (padrão) até 1200
+		}
+
+		OffsetY: {
+			Label: Deslocamento Y
+			Tooltip: Move os medidores na vertical. Vai de 0 (padrão) até 1200
+		}
+	}
+}
+
+UI: {
+	Hunger: {
+		Title: Medidor de Fome
+		Bloated: Você está estufado
+		Full: Você está cheio
+		WellFed: Você está bem alimentado
+		Peckish: Você está com fominha
+		Hungry: Você está com fome
+		Famished: Você está faminto
+		Starved: Você está morrendo de fome
+		HintTooMuch: Se comer mais, pode acabar vomitando!
+		HintEat:
+			'''
+			Coma alguma coisa!
+			Quanto melhor a comida, mais ela te satisfaz.
+			'''
+	}
+
+	Rest: {
+		Title: Medidor de Descanso
+		Rested: Você está descansado
+		Tired: Você está cansado
+		Sleepy: Você está sonolento
+		Exhausted: Você está exausto
+		Hint: Descanse um pouco!
+	}
+
+	Sanity: {
+		Title: Medidor de Sanidade
+		Well: Você está bem
+		Stressed: Você está estressado
+		Scared: Você está assustado
+		Terrified: Você está aterrorizado
+		Hint: Para recuperar sanidade, vá para um lugar seguro!
+	}
+
+	Warmth: {
+		Title: Medidor de Temperatura
+		Comfortable: Você está confortável
+		Cold: Você está com frio
+		VeryCold: Você está com muito frio
+		Freezing: Você está congelando
+		Warm: Você está com calor
+		Hot: Você está com muito calor
+		Scorching: Você está escaldando
+		HintCold: Encontre uma fonte de calor para se aquecer! Uma fogueira, por exemplo.
+		HintHot: Encontre algo para se refrescar! Água, por exemplo.
+	}
+}
+
+Messages: {
+	SleepDeprived: Sua rotina de sono tem sido péssima. Seu corpo está começando a sentir as consequências.
+	GloomWarning: Você sente que algo terrível está prestes a acontecer
+	GloomCountdown: "{0}..."
+	GloomEscaped: Você teve sorte desta vez
+	Cancer: Você não tem fumado com moderação, não é?
+}
+
+Tooltips: {
+	CoffeeCup: Diminui a perda de descanso.
+	CoffeeCupFlavor: "'Olá escuridão, minha velha amiga'"
+	WarmthPotion: Aquece seu corpo
+	ObsidianSkinPotion: Refresca seu corpo
+}
+
+DeathReasons: {
+	Gloom: "{0} foi obliterado"
+	Scorching: "{0} morreu queimado"
+}
