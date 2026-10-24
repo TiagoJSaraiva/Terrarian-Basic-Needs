@@ -17,7 +17,6 @@ namespace ChallengingTerrariaMod.Content.Consumables
 
         public override void SetDefaults()
         {
-            Item.value = Item.buyPrice(silver: 50);
             Item.useAnimation = 20;
             Item.useTime = 20;
             Item.UseSound = SoundID.Item3;

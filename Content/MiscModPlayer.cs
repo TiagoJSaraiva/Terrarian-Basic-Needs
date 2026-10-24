@@ -1,23 +1,15 @@
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Collections.Generic;
-using ChallengingTerrariaMod.Content.Consumables;
 
 namespace ChallengingTerrariaMod.Content
 {
-    public class MeuModPlayer : ModPlayer
-{
-    public override IEnumerable<Item> AddStartingItems(bool mediumCoreDeath)
+    public class StartingItemsPlayer : ModPlayer
     {
-        List<Item> items = new List<Item>();
-
-        Item apple = new Item();
-        apple.SetDefaults(ItemID.Apple);
-        apple.stack = 5;
-        items.Add(apple);
-
-        return items; 
+        public override IEnumerable<Item> AddStartingItems(bool mediumCoreDeath)
+        {
+            yield return new Item(ItemID.Apple, 5);
+        }
     }
-}
 }

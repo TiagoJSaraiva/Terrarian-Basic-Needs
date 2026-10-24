@@ -1,89 +1,56 @@
+using ChallengingTerrariaMod.Common;
+using ChallengingTerrariaMod.Common.Logic;
+using ChallengingTerrariaMod.Content.Buffs;
+using ChallengingTerrariaMod.Content.Projectiles;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Terraria.DataStructures;
-using ChallengingTerrariaMod.Content.Buffs;
-using Terraria.Audio;
-using ChallengingTerrariaMod.Content.Projectiles;
 using Terraria.ModLoader.IO;
 
 namespace ChallengingTerrariaMod.Content.Consumables
 {
     public class Cigarette : ModItem
     {
-        private int CigarettesSmoked;
-
-        public override void SetStaticDefaults()
-        {
-            CigarettesSmoked = 0;
-        }
         public override void SetDefaults()
         {
             Item.useStyle = ItemUseStyleID.DrinkLong;
             Item.useAnimation = 240;
             Item.useTime = 240;
-            Item.shoot = ModContent.ProjectileType<CigaretteProjectile>();
+            Item.shoot = ModContent.ProjectileType<CigaretteProjectile>(); // The cigarette drawn in the player's mouth
             Item.shootSpeed = 1f;
             Item.useTurn = true;
-            Item.UseSound = new SoundStyle("ChallengingTerrariaMod/Assets/Audio/CigaretteSFX"); ;
+            Item.UseSound = new SoundStyle("ChallengingTerrariaMod/Assets/Audio/CigaretteSFX");
             Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;
             Item.rare = ItemRarityID.Green;
             Item.value = Item.buyPrice(silver: 50);
             Item.noUseGraphic = true;
-
-            Item.buffTime = 240 * 60;
         }
 
         public override void OnConsumeItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<ArmoredMind>(), 60 * 240);
-            CigarettesSmoked++;
-            if (CigarettesSmoked >= 50)
-            {
-                player.AddBuff(ModContent.BuffType<Cancer>(), 60 * 3000);
-                Main.NewText("You haven't been smoking in moderation, have you?", Color.White);
-                CigarettesSmoked = 0;
-            }
-        }
-
-        public override void SaveData(TagCompound tag)
-        {
-            tag.Add("CigarettesSmoked", CigarettesSmoked);
-        }
-
-        public override void LoadData(TagCompound tag)
-        {
-            if (tag.ContainsKey("CigarettesSmoked"))
-            {
-                CigarettesSmoked = tag.GetInt("CigarettesSmoked");
-            }
-            else
-            {
-                CigarettesSmoked = 0; 
-            }
+            player.GetModPlayer<CigarettePlayer>().Smoke();
         }
     }
 
     public class CigarettePlayer : ModPlayer
     {
-        public int timeLeft_cancer = 0;
+        // Counted per player; it used to live on the item stack and was lost whenever the stack ran out
+        public int CigarettesSmoked;
 
-        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+        public void Smoke()
         {
-            for (int i = 0; i < Player.buffType.Length; i++)
+            if (Player.whoAmI != Main.myPlayer) return;
+
+            Player.AddBuff(ModContent.BuffType<ArmoredMind>(), CigaretteLogic.ArmoredMindDurationSeconds * 60);
+
+            if (CigaretteLogic.Smoke(ref CigarettesSmoked))
             {
-                if (Player.buffType[i] == ModContent.BuffType<Cancer>())
-                {
-                    timeLeft_cancer = Player.buffTime[i];
-                    break;
-                }
+                Player.AddBuff(ModContent.BuffType<Cancer>(), CigaretteLogic.CancerDurationSeconds * 60);
+                Main.NewText(Text.Get("Messages.Cancer"), Color.White);
             }
-        }
-        public override void OnRespawn()
-        {
-            Player.AddBuff(ModContent.BuffType<Cancer>(), timeLeft_cancer);
         }
 
         public override void ModifyNursePrice(NPC nurse, int health, bool removeDebuffs, ref int price)
@@ -91,6 +58,19 @@ namespace ChallengingTerrariaMod.Content.Consumables
             if (Player.HasBuff(ModContent.BuffType<Cancer>()))
             {
                 price += Item.buyPrice(platinum: 2);
+            }
+        }
+
+        public override void SaveData(TagCompound tag)
+        {
+            tag["CigarettesSmoked"] = CigarettesSmoked;
+        }
+
+        public override void LoadData(TagCompound tag)
+        {
+            if (tag.ContainsKey("CigarettesSmoked"))
+            {
+                CigarettesSmoked = tag.GetInt("CigarettesSmoked");
             }
         }
     }

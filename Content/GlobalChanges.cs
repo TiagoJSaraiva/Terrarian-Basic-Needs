@@ -1,20 +1,18 @@
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
-using Terraria.ID;
-using ChallengingTerrariaMod.Content.Buffs;
 using System.Collections.Generic;
-using Terraria.UI;
-using Terraria.GameContent.ItemDropRules;
+using ChallengingTerrariaMod.Common;
+using ChallengingTerrariaMod.Common.Logic;
+using ChallengingTerrariaMod.Content.Buffs;
 using ChallengingTerrariaMod.Content.Consumables;
 using ChallengingTerrariaMod.Content.Systems.Players;
-using System.Linq;
+using Terraria;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace ChallengingTerrariaMod.Content.GlobalChanges
 {
     public class GlobalItemChanges : GlobalItem
     {
-
         public override void SetDefaults(Item item)
         {
             if (item.type == ItemID.CoffeeCup)
@@ -34,27 +32,24 @@ namespace ChallengingTerrariaMod.Content.GlobalChanges
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            if (item.type == ItemID.CoffeeCup)
+            switch (item.type)
             {
-                tooltips.RemoveAll(t => t.Name == "Tooltip0");
+                case ItemID.CoffeeCup:
+                    // Replace vanilla's "Minor improvements to all stats" (the Well Fed buff is gone)
+                    tooltips.RemoveAll(t => t.Name == "Tooltip0");
+                    TooltipLine buffTooltip = tooltips.Find(t => t.Name == "Tooltip1");
+                    if (buffTooltip != null) buffTooltip.Text = Text.Get("Tooltips.CoffeeCup");
+                    else tooltips.Add(new TooltipLine(Mod, "CoffeeEffect", Text.Get("Tooltips.CoffeeCup")));
+                    tooltips.Add(new TooltipLine(Mod, "CustomDescription", Text.Get("Tooltips.CoffeeCupFlavor")));
+                    break;
 
-                TooltipLine buffTooltip = tooltips.Find(t => t.Name == "Tooltip1");
-                buffTooltip.Text = "Retards rest loss.";
+                case ItemID.WarmthPotion:
+                    tooltips.Add(new TooltipLine(Mod, "CustomDescription", Text.Get("Tooltips.WarmthPotion")));
+                    break;
 
-                TooltipLine descriptionLine = new TooltipLine(Mod, "CustomDescription", "'Hello darkness my old friend'");
-                tooltips.Add(descriptionLine);
-            }
-
-            if (item.type == ItemID.WarmthPotion)
-            {
-                TooltipLine descriptionLine = new TooltipLine(Mod, "CustomDescription", "Warms your body");
-                tooltips.Add(descriptionLine);
-            }
-
-            if (item.type == ItemID.ObsidianSkinPotion)
-            {
-                TooltipLine descriptionLine = new TooltipLine(Mod, "CustomDescription", "Cools your body");
-                tooltips.Add(descriptionLine);
+                case ItemID.ObsidianSkinPotion:
+                    tooltips.Add(new TooltipLine(Mod, "CustomDescription", Text.Get("Tooltips.ObsidianSkinPotion")));
+                    break;
             }
         }
     }
@@ -63,160 +58,73 @@ namespace ChallengingTerrariaMod.Content.GlobalChanges
     {
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
-            if (npc.type == NPCID.SkeletonCommando)
+            switch (npc.type)
             {
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Cigarette>(), 30, 1, 1));
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AdrenalineInjection>(), 30, 1, 1));
+                case NPCID.SkeletonCommando:
+                    AddDrop<Cigarette>(npcLoot, 30);
+                    AddDrop<AdrenalineInjection>(npcLoot, 30);
+                    break;
+                case NPCID.UndeadViking:
+                case NPCID.SnowFlinx:
+                    AddDrop<Cigarette>(npcLoot, 50);
+                    break;
+                case NPCID.ArmoredViking:
+                    AddDrop<Cigarette>(npcLoot, 50);
+                    AddDrop<AdrenalineInjection>(npcLoot, 50);
+                    break;
+                case NPCID.Necromancer:
+                    AddDrop<Vitamin>(npcLoot, 30);
+                    AddDrop<FoodPill>(npcLoot, 30);
+                    break;
+                case NPCID.DesertGhoul:
+                    AddDrop<Vitamin>(npcLoot, 50);
+                    AddDrop<FoodPill>(npcLoot, 50);
+                    break;
+                case NPCID.WalkingAntlion:
+                case NPCID.FlyingAntlion:
+                    AddDrop<Vitamin>(npcLoot, 50);
+                    break;
+                case NPCID.AngryTrapper:
+                    AddDrop<CaffeinePill>(npcLoot, 50);
+                    break;
+                case NPCID.BoneLee:
+                    AddDrop<CaffeinePill>(npcLoot, 30);
+                    break;
             }
-            if (npc.type == NPCID.UndeadViking)
-            {
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Cigarette>(), 50, 1, 1));
-            }
-            if (npc.type == NPCID.SnowFlinx)
-            {
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Cigarette>(), 50, 1, 1));
-            }
-            if (npc.type == NPCID.ArmoredViking)
-            {
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Cigarette>(), 50, 1, 1));
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AdrenalineInjection>(), 50, 1, 1));
-            }
+        }
 
-
-
-            if (npc.type == NPCID.Necromancer)
-            {
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Vitamin>(), 30, 1, 1));
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FoodPill>(), 30, 1, 1));
-            }
-            if (npc.type == NPCID.DesertGhoul)
-            {
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Vitamin>(), 50, 1, 1));
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FoodPill>(), 50, 1, 1));
-            }
-        
-            if (npc.type == NPCID.WalkingAntlion)
-            {
-
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Vitamin>(), 50, 1, 1));
-            }
-            if (npc.type == NPCID.FlyingAntlion)
-            {
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Vitamin>(), 50, 1, 1));
-            }
-            
-
-            if (npc.type == NPCID.AngryTrapper)
-            {
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CaffeinePill>(), 50, 1, 1));
-            }
-            if (npc.type == NPCID.BoneLee)
-            {
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CaffeinePill>(), 30, 1, 1));
-            }
+        // 1 in chanceDenominator chance to drop one
+        private static void AddDrop<T>(NPCLoot npcLoot, int chanceDenominator) where T : ModItem
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<T>(), chanceDenominator));
         }
 
         public override void ModifyShop(NPCShop shop)
         {
             if (shop.NpcType == NPCID.ArmsDealer)
-            {  
+            {
                 shop.Add(new Item(ModContent.ItemType<Cigarette>())
                 {
                     shopCustomPrice = Item.buyPrice(gold: 3, silver: 50)
-                }); 
+                });
             }
         }
 
+        // The Travelling Merchant sells 2 different items from the pool; Hardmode unlocks more of them.
         public override void SetupTravelShop(int[] shop, ref int nextSlot)
         {
-            int Item1;
-            int Item2;
-
-            if (!Condition.Hardmode.IsMet())
+            var pool = new List<int> { ModContent.ItemType<Cigarette>(), ModContent.ItemType<Vitamin>(), ItemID.CoffeeCup };
+            if (Main.hardMode)
             {
-                Item1 = Main.rand.Next(1, 4);
-                do
-                {
-                    Item2 = Main.rand.Next(1, 4);
-                } while (Item1 == Item2);
-
-                switch (Item1)
-                {
-                    case 1:
-                        shop[nextSlot] = ModContent.ItemType<Cigarette>();
-                        nextSlot++; break;
-                    case 2:
-                        shop[nextSlot] = ModContent.ItemType<Vitamin>();
-                        nextSlot++; break;
-                    case 3:
-                        shop[nextSlot] = ItemID.CoffeeCup;
-                        nextSlot++; break;
-                }
-
-                switch (Item2)
-                {
-                    case 1:
-                        shop[nextSlot] = ModContent.ItemType<Cigarette>();
-                        nextSlot++; break;
-                    case 2:
-                        shop[nextSlot] = ModContent.ItemType<Vitamin>();
-                        nextSlot++; break;
-                    case 3:
-                        shop[nextSlot] = ItemID.CoffeeCup;
-                        nextSlot++; break;
-                }
+                pool.Add(ModContent.ItemType<CaffeinePill>());
+                pool.Add(ModContent.ItemType<FoodPill>());
+                pool.Add(ModContent.ItemType<AdrenalineInjection>());
             }
-            else
+
+            foreach (int itemType in ShopLogic.PickDistinct(pool, 2, Main.rand.Next))
             {
-                Item1 = Main.rand.Next(1, 7);
-                do
-                {
-                    Item2 = Main.rand.Next(1, 7);
-                } while (Item1 == Item2);
-
-                switch (Item1)
-                {
-                    case 1:
-                        shop[nextSlot] = ModContent.ItemType<Cigarette>();
-                        nextSlot++; break;
-                    case 2:
-                        shop[nextSlot] = ModContent.ItemType<Vitamin>();
-                        nextSlot++; break;
-                    case 3:
-                        shop[nextSlot] = ItemID.CoffeeCup;
-                        nextSlot++; break;
-                    case 4:
-                        shop[nextSlot] = ModContent.ItemType<CaffeinePill>();
-                        nextSlot++; break;
-                    case 5:
-                        shop[nextSlot] = ModContent.ItemType<FoodPill>();
-                        nextSlot++; break;
-                    case 6:
-                        shop[nextSlot] = ModContent.ItemType<AdrenalineInjection>();
-                        nextSlot++; break;
-                }
-
-                switch (Item2)
-                {
-                    case 1:
-                        shop[nextSlot] = ModContent.ItemType<Cigarette>();
-                        nextSlot++; break;
-                    case 2:
-                        shop[nextSlot] = ModContent.ItemType<Vitamin>();
-                        nextSlot++; break;
-                    case 3:
-                        shop[nextSlot] = ItemID.CoffeeCup;
-                        nextSlot++; break;
-                    case 4:
-                        shop[nextSlot] = ModContent.ItemType<CaffeinePill>();
-                        nextSlot++; break;
-                    case 5:
-                        shop[nextSlot] = ModContent.ItemType<FoodPill>();
-                        nextSlot++; break;
-                    case 6:
-                        shop[nextSlot] = ModContent.ItemType<AdrenalineInjection>();
-                        nextSlot++; break;
-                }
+                if (nextSlot >= shop.Length) break; // Other mods may have filled the shop already
+                shop[nextSlot++] = itemType;
             }
         }
     }

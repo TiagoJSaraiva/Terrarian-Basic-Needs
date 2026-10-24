@@ -13,7 +13,7 @@ namespace ChallengingTerrariaMod.Content.Consumables
 			Item.ResearchUnlockCount = 5;
 
 			Main.RegisterItemAnimation(Type, new DrawAnimationVertical(int.MaxValue, 3));
-            ItemID.Sets.FoodParticleColors[Item.type] = new Color[]
+            ItemID.Sets.FoodParticleColors[Type] = new Color[]
             {
                 new Color(150, 93, 95),  
                 new Color(192, 114, 76), 
@@ -25,7 +25,6 @@ namespace ChallengingTerrariaMod.Content.Consumables
 
         public override void SetDefaults()
         {
-            Item.value = Item.buyPrice(silver: 50);
             Item.useAnimation = 20;
             Item.useTime = 20;
             Item.UseSound = SoundID.Item2;

@@ -148,27 +148,27 @@ Projectiles: {
 Items: {
 	Cigarette: {
 		DisplayName: Cigarette
-		Tooltip: Retards sanity loss. Smoke in moderation!
+		Tooltip: Slows sanity loss. Smoke in moderation!
 	}
 
 	Vitamin: {
 		DisplayName: Vitamin
-		Tooltip: Retards hunger loss.
+		Tooltip: Slows hunger loss.
 	}
 
 	AdrenalineInjection: {
 		DisplayName: Adrenaline Injection
-		Tooltip: Retards sanity loss.
+		Tooltip: Slows sanity loss.
 	}
 
 	CaffeinePill: {
 		DisplayName: Caffeine Pill
-		Tooltip: Retards rest loss.
+		Tooltip: Slows rest loss.
 	}
 
 	FoodPill: {
 		DisplayName: Food Pill
-		Tooltip: Retards hunger loss.
+		Tooltip: Slows hunger loss.
 	}
 }
 
@@ -267,6 +267,14 @@ Messages: {
 	GloomWarning: You feel that something terrible is about to happen
 	GloomCountdown: "{0}..."
 	GloomEscaped: You got lucky this time
+	Cancer: You haven't been smoking in moderation, have you?
+}
+
+Tooltips: {
+	CoffeeCup: Slows rest loss.
+	CoffeeCupFlavor: "'Hello darkness my old friend'"
+	WarmthPotion: Warms your body
+	ObsidianSkinPotion: Cools your body
 }
 
 DeathReasons: {
