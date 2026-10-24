@@ -8,6 +8,13 @@
 		
 	</PropertyGroup>
 
+	<!-- The unit test project lives inside the mod folder but must not be compiled into the mod -->
+	<ItemGroup>
+		<Compile Remove="Tests/**" />
+		<None Remove="Tests/**" />
+		<AdditionalFiles Remove="Tests/**" />
+	</ItemGroup>
+
 	<!-- References -->
 	<ItemGroup>
 		
