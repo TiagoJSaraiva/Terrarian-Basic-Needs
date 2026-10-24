@@ -1,12 +1,13 @@
-using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using System.ComponentModel;
+using Newtonsoft.Json;
+using Terraria.ModLoader.Config;
 
 namespace ChallengingTerrariaMod.Content.ModConfigs
 {
-    public class ModConfigServer : ModConfig // Global config
+    // [JsonProperty] keeps the names already saved in players' config files, so renaming a field doesn't reset it.
+    public class ModConfigServer : ModConfig
     {
-        public override ConfigScope Mode => ConfigScope.ServerSide; 
+        public override ConfigScope Mode => ConfigScope.ServerSide;
 
         [Range(0.1f, 5f)]
         [DefaultValue(1f)]
@@ -18,29 +19,28 @@ namespace ChallengingTerrariaMod.Content.ModConfigs
 
         [Range(0.1f, 5f)]
         [DefaultValue(1f)]
-        public float sanityMultiplier;
+        [JsonProperty("sanityMultiplier")]
+        public float SanityMultiplier;
 
         [Range(0.1f, 5f)]
         [DefaultValue(1f)]
-        public float warmthMultiplier;
-
+        [JsonProperty("warmthMultiplier")]
+        public float WarmthMultiplier;
     }
 
-    public class ModConfigClient : ModConfig // Local config
+    public class ModConfigClient : ModConfig
     {
-        public static void setLocalization(ref int x, ref int y)
-        {
-            x += ModContent.GetInstance<ModConfigClient>().localizationX;
-            y += ModContent.GetInstance<ModConfigClient>().localizationY;
-        }
         public override ConfigScope Mode => ConfigScope.ClientSide;
+
+        // Offset in pixels applied to all meters
+        [Range(0, 1200)]
+        [DefaultValue(0)]
+        [JsonProperty("localizationX")]
+        public int OffsetX;
 
         [Range(0, 1200)]
         [DefaultValue(0)]
-        public int localizationX;
-        
-        [Range(0, 1200)]
-        [DefaultValue(0)]
-        public int localizationY;
+        [JsonProperty("localizationY")]
+        public int OffsetY;
     }
 }

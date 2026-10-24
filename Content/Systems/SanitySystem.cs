@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria.UI;
 using Terraria.Localization;
-using ChallengingTerrariaMod.Content.Systems.UI;
 using System;
 using ChallengingTerrariaMod.Content.Buffs;
 using ChallengingTerrariaMod.Content.ModConfigs;
@@ -16,59 +15,6 @@ namespace ChallengingTerrariaMod.Content.Systems
     public class SanitySystem : ModSystem
     {
         public const float maxSanity = 1200;
-
-        // UI do sono
-        public static UserInterface SanityUserInterface;
-        public static SanityBarUI SanityUIState; 
-
-        public override void Load()
-        {
-            if (!Main.dedServ)
-            {
-                SanityUIState = new SanityBarUI();
-                SanityUIState.Activate();
-                SanityUserInterface = new UserInterface();
-                SanityUserInterface.SetState(SanityUIState);
-            }
-        }
-
-        public override void Unload()
-        {
-            if (!Main.dedServ)
-            {
-                SanityUIState = null;
-                SanityUserInterface = null;
-            }
-        }
-
-        public override void UpdateUI(GameTime gameTime)
-        {
-            if (SanityUserInterface?.CurrentState != null)
-            {
-                SanityUserInterface.Update(gameTime);
-            }
-        }
-
-        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
-        {
-            int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-            if (mouseTextIndex != -1)
-            {
-                layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer(
-                    "ChallengingTerrariaMod: Sanity UI",
-                    delegate
-                    {
-                        // Desenha a UI apenas se o jogador local estiver ativo e não morto/fantasma
-                        if (Main.LocalPlayer.active && !Main.LocalPlayer.dead && !Main.LocalPlayer.ghost)
-                        {
-                            SanityUserInterface.Draw(Main.spriteBatch, new GameTime());
-                        }
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-        }
 
         public override void ModifyLightingBrightness(ref float scale)
         {
@@ -100,7 +46,7 @@ namespace ChallengingTerrariaMod.Content.Systems
                     if (player.active && !player.dead && !player.ghost)
                     {
                         SanityPlayer sanityPlayer = player.GetModPlayer<SanityPlayer>();
-                        float SanityMultiplier = ModContent.GetInstance<ModConfigServer>().sanityMultiplier;
+                        float SanityMultiplier = ModContent.GetInstance<ModConfigServer>().SanityMultiplier;
 
                         // Sanity logic
                         if (!player.HasBuff(ModContent.BuffType<ArmoredMind>()))

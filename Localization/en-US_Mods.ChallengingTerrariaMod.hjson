@@ -178,36 +178,86 @@ Configs: {
 
 		HungerMultiplier: {
 			Label: Hunger Multiplier
-			Tooltip: Adjusts the hunger rate.
+			Tooltip: Multiplies how fast you get hungry. Does not change how much food restores.
 		}
 
 		RestMultiplier: {
 			Label: Rest Multiplier
-			Tooltip: Adjusts the rest rate.
+			Tooltip: Multiplies how fast you get tired. Does not change how fast you recover by sleeping.
 		}
 
-		sanityMultiplier: {
+		SanityMultiplier: {
 			Label: Sanity Multiplier
-			Tooltip: Adjusts the sanity rate.
+			Tooltip: Multiplies how fast you lose sanity. Does not change how fast you recover it.
 		}
 
-		warmthMultiplier: {
+		WarmthMultiplier: {
 			Label: Warmth Multiplier
-			Tooltip: Adjusts the warmth rate.
+			Tooltip: Multiplies how fast your temperature changes because of the environment.
 		}
 	}
 
 	ModConfigClient: {
 		DisplayName: Meter's Position
 
-		localizationX: {
+		OffsetX: {
 			Label: X Offset
-			Tooltip: Adjusts the horizontal position of the meter on the screen. Goes from 0 (default) up to 1200
+			Tooltip: Moves the meters horizontally on the screen. Goes from 0 (default) up to 1200
 		}
 
-		localizationY: {
+		OffsetY: {
 			Label: Y Offset
-			Tooltip: Adjusts the vertical position of the meter on the screen. Goes from 0 (default) up to 1200
+			Tooltip: Moves the meters vertically on the screen. Goes from 0 (default) up to 1200
 		}
+	}
+}
+
+UI: {
+	Hunger: {
+		Title: Hunger Meter
+		Bloated: You're bloated
+		Full: You're full
+		WellFed: You're well fed
+		Peckish: You're peckish
+		Hungry: You're hungry
+		Famished: You're famished
+		Starved: You're starving
+		HintTooMuch: If you eat more, you might throw up!
+		HintEat:
+			'''
+			Eat something!
+			The better the quality of the food, the more it satisfies you.
+			'''
+	}
+
+	Rest: {
+		Title: Rest Meter
+		Rested: You're rested
+		Tired: You're tired
+		Sleepy: You're sleepy
+		Exhausted: You're exhausted
+		Hint: Rest a little!
+	}
+
+	Sanity: {
+		Title: Sanity Meter
+		Well: You're well
+		Stressed: You're stressed
+		Scared: You're scared
+		Terrified: You're terrified
+		Hint: To increase your sanity level, go to a safe place!
+	}
+
+	Warmth: {
+		Title: Warmth Meter
+		Comfortable: You're comfortable
+		Cold: You're feeling cold
+		VeryCold: You're very cold
+		Freezing: You're freezing
+		Warm: You're warm
+		Hot: You're hot
+		Scorching: You're scorching
+		HintCold: Find a heat source to warm you up! For example, a campfire.
+		HintHot: Find something to cool you down! Like water, for example.
 	}
 }

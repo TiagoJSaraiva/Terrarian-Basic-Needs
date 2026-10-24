@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria.UI;
 using Terraria.Localization;
-using ChallengingTerrariaMod.Content.Systems.UI;
 using Terraria.DataStructures;
 using System;
 using ChallengingTerrariaMod.Content.Buffs; // Esta linha é necessária novamente para verificar buffs personalizados
@@ -36,19 +35,8 @@ namespace ChallengingTerrariaMod.Content.Systems
         // Usamos um array pois pode haver múltiplos jogadores.
         public static int[] PreviousTemperature;
 
-        // Variáveis da UI
-        public static UserInterface WarmthUserInterface;
-        public static WarmthMeterUI WarmthUIState;
-
         public override void Load()
         {
-            if (!Main.dedServ)
-            {
-                WarmthUIState = new WarmthMeterUI();
-                WarmthUserInterface = new UserInterface();
-                WarmthUserInterface.SetState(WarmthUIState);
-            }
-            // Inicializa o array de temperaturas anteriores
             PreviousTemperature = new int[Main.maxPlayers];
             for (int i = 0; i < Main.maxPlayers; i++)
             {
@@ -58,41 +46,7 @@ namespace ChallengingTerrariaMod.Content.Systems
 
         public override void Unload()
         {
-            if (!Main.dedServ)
-            {
-                WarmthUIState = null;
-                WarmthUserInterface = null;
-            }
             PreviousTemperature = null;
-        }
-
-        public override void UpdateUI(GameTime gameTime)
-        {
-            if (WarmthUserInterface?.CurrentState != null)
-            {
-                WarmthUserInterface.Update(gameTime);
-            }
-        }
-
-        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
-        {
-            int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-            if (mouseTextIndex != -1)
-            {
-                layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer(
-                    "ChallengingTerrariaMod: Warmth UI",
-                    delegate
-                    {
-                        // Desenha a UI apenas se o jogador local estiver ativo e não morto/fantasma
-                        if (Main.LocalPlayer.active && !Main.LocalPlayer.dead && !Main.LocalPlayer.ghost)
-                        {
-                            WarmthUserInterface.Draw(Main.spriteBatch, new GameTime());
-                        }
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
         }
 
         public override void PostUpdatePlayers()
@@ -108,7 +62,7 @@ namespace ChallengingTerrariaMod.Content.Systems
                 {
                     if (player.active && !player.dead && !player.ghost)
                     {
-                        float warmthMultiplier = ModContent.GetInstance<ModConfigServer>().warmthMultiplier;
+                        float warmthMultiplier = ModContent.GetInstance<ModConfigServer>().WarmthMultiplier;
                         WarmthPlayer warmthPlayer = player.GetModPlayer<WarmthPlayer>();
                         if (warmthPlayer == null) continue;
 

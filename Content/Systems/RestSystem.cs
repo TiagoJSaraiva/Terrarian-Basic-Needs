@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria.UI;
 using Terraria.Localization;
-using ChallengingTerrariaMod.Content.Systems.UI;
 using System;
 using ChallengingTerrariaMod.Content.Buffs;
 using ChallengingTerrariaMod.Content.ModConfigs;
@@ -24,63 +23,6 @@ namespace ChallengingTerrariaMod.Content.Systems
 
         public const short maxSleep = 1200;
         public const int minSleep = 0;
-
-        // Removeremos as constantes de horário específicas, pois não serão mais usadas para a lógica de ganho.
-        // private const double START_SLEEP_GAIN_TIME = 19.5; 
-        // private const double END_SLEEP_GAIN_TIME = 4.5; 
-
-        // UI do sono
-        public static UserInterface RestUserInterface;
-        public static RestMeterUI RestUIState;
-
-        public override void Load()
-        {
-            if (!Main.dedServ)
-            {
-                RestUIState = new RestMeterUI();
-                RestUIState.Activate();
-                RestUserInterface = new UserInterface();
-                RestUserInterface.SetState(RestUIState);
-            }
-        }
-
-        public override void Unload()
-        {
-            if (!Main.dedServ)
-            {
-                RestUIState = null;
-                RestUserInterface = null;
-            }
-        }
-
-        public override void UpdateUI(GameTime gameTime)
-        {
-            if (RestUserInterface?.CurrentState != null)
-            {
-                RestUserInterface.Update(gameTime);
-            }
-        }
-
-        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
-        {
-            int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-            if (mouseTextIndex != -1)
-            {
-                layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer(
-                    "ChallengingTerrariaMod: Rest UI",
-                    delegate
-                    {
-                        // Desenha a UI apenas se o jogador local estiver ativo e não morto/fantasma
-                        if (Main.LocalPlayer.active && !Main.LocalPlayer.dead && !Main.LocalPlayer.ghost)
-                        {
-                            RestUserInterface.Draw(Main.spriteBatch, new GameTime());
-                        }
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-        }
 
         private void UpdateRest(RestPlayer restPlayer, float _sleepPerSecond, float _sleepPerSecondAccelerated)
         {
