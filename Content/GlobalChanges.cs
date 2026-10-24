@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Terraria.UI;
 using Terraria.GameContent.ItemDropRules;
 using ChallengingTerrariaMod.Content.Consumables;
+using ChallengingTerrariaMod.Content.Systems.Players;
 using System.Linq;
 
 namespace ChallengingTerrariaMod.Content.GlobalChanges
@@ -24,6 +25,11 @@ namespace ChallengingTerrariaMod.Content.GlobalChanges
                 item.consumable = true;
                 item.value = Item.buyPrice(silver: 50);
             }
+        }
+
+        public override void OnConsumeItem(Item item, Player player)
+        {
+            player.GetModPlayer<HungerPlayer>().OnFoodEaten(item);
         }
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)

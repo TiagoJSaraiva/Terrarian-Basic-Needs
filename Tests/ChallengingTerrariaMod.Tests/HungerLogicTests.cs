@@ -45,10 +45,17 @@ namespace ChallengingTerrariaMod.Tests
             Assert.Equal(expected, HungerLogic.Drain(isMoving: true, nourished: false, multiplier), 3);
         }
 
+        // A6: hunger used to drop only while moving
         [Fact]
-        public void Drain_Idle_CurrentBehavior_A6()
+        public void Drain_Idle_LosesOnePerSecond()
         {
-            Assert.Equal(0f, HungerLogic.Drain(isMoving: false, nourished: false, multiplier: 1f));
+            Assert.Equal(1f, HungerLogic.Drain(isMoving: false, nourished: false, multiplier: 1f));
+        }
+
+        [Fact]
+        public void Drain_IdleWhileNourished_LosesHalf()
+        {
+            Assert.Equal(0.5f, HungerLogic.Drain(isMoving: false, nourished: true, multiplier: 1f));
         }
 
         [Theory]

@@ -1,73 +1,71 @@
+using ChallengingTerrariaMod.Common.Logic;
+using ChallengingTerrariaMod.Content.Buffs;
+using ChallengingTerrariaMod.Content.ModConfigs;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using ChallengingTerrariaMod.Content.Systems.Players;
-using Terraria.ID;
-using ChallengingTerrariaMod.Content.Buffs;
-using Terraria.DataStructures;
-using Microsoft.Xna.Framework;
-using ChallengingTerrariaMod.Content.ModConfigs;
 
 namespace ChallengingTerrariaMod.Content.Systems.Players
 {
     public class HungerPlayer : ModPlayer
     {
-        public float CurrentHunger; 
-        private bool foodItemConsumedThisTick; 
+        private const int DebuffDurationTicks = 61; // Renewed every second while the condition lasts
+        private const int NauseousDurationTicks = 60 * 60;
+        private const int ThrowingUpDurationTicks = 2 * 60;
+        private const int ShortFoodBuffTicks = 3 * 60;
+        private const int StarvedLifeRegen = -20; // Half life points per second, so 10 HP/s
 
-        private const int RespawnHungerValue = 400; 
+        public float CurrentHunger;
+        private bool _shortenFoodBuffs;
 
         public override void Initialize()
         {
-            CurrentHunger = HungerSystem.MaxHungerNormal;
+            CurrentHunger = HungerLogic.MaxNormal;
         }
+
+        // The owner's client simulates hunger; buffs are synced to other players by vanilla.
+        private bool IsSimulated => Player.whoAmI == Main.myPlayer && !Player.dead && !Player.ghost;
 
         public override void PreUpdate()
         {
-            if (Player.active && !Player.dead && !Player.ghost)
+            if (!IsSimulated) return;
+
+            if (HungerLogic.ShouldVomit(CurrentHunger))
             {
-                // Lógica de Vômito (saciedade extrema)
-                if (CurrentHunger >= HungerSystem.AbsoluteMaxHunger)
-                {
-                    CurrentHunger = RespawnHungerValue;
-                    Player.AddBuff(ModContent.BuffType<Nauseous>(),  60 * 60);
-                    Player.AddBuff(ModContent.BuffType<ThrowingUp>(), 2 * 60);
+                Vomit();
+            }
 
-                    Player.ClearBuff(BuffID.WellFed);
-                    Player.ClearBuff(BuffID.WellFed2);
-                    Player.ClearBuff(BuffID.WellFed3);
+            if (Main.GameUpdateCount % HungerLogic.TickRate == 0)
+            {
+                float multiplier = ModContent.GetInstance<ModConfigServer>().HungerMultiplier;
+                bool isMoving = Player.velocity != Vector2.Zero;
+                bool nourished = Player.HasBuff(ModContent.BuffType<Nourished>());
 
-                    for (int i = 0; i < 20; i++)
-                    {
-                        Dust.NewDust(Player.position, Player.width, Player.height, DustID.Smoke,
-                                     Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 2f),
-                                     100, new Color(0, 255, 0, 100), Main.rand.NextFloat(1.5f, 2.5f));
-                    }
-                }
-
-                if (Main.GameUpdateCount % HungerSystem.HungerTickRate == 0)
-                {
-                    float HungerMultiplier = ModContent.GetInstance<ModConfigServer>().HungerMultiplier;
-    
-                    if (Player.velocity.X != 0 || Player.velocity.Y != 0)
-                    {
-                        if (Player.HasBuff(ModContent.BuffType<Nourished>()))
-                        {
-                            CurrentHunger -= HungerSystem.HungerDecrementIdle * HungerMultiplier;
-                        }
-                        else
-                        {
-                            CurrentHunger -= HungerSystem.HungerDecrementMoving * HungerMultiplier;
-                        }
-                    }
-                    
-
-                    CurrentHunger = Utils.Clamp(CurrentHunger, 0, HungerSystem.AbsoluteMaxHunger);
-
-                    ApplyHungerDebuffs();
-                }
+                CurrentHunger = HungerLogic.Clamp(CurrentHunger - HungerLogic.Drain(isMoving, nourished, multiplier));
+                ApplyHungerDebuffs();
             }
         }
+
+        private void Vomit()
+        {
+            CurrentHunger = HungerLogic.HungerAfterVomiting;
+            Player.AddBuff(ModContent.BuffType<Nauseous>(), NauseousDurationTicks);
+            Player.AddBuff(ModContent.BuffType<ThrowingUp>(), ThrowingUpDurationTicks);
+
+            Player.ClearBuff(BuffID.WellFed);
+            Player.ClearBuff(BuffID.WellFed2);
+            Player.ClearBuff(BuffID.WellFed3);
+
+            for (int i = 0; i < 20; i++)
+            {
+                Dust.NewDust(Player.position, Player.width, Player.height, DustID.Smoke,
+                             Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 2f),
+                             100, new Color(0, 255, 0, 100), Main.rand.NextFloat(1.5f, 2.5f));
+            }
+        }
+
         public override void PostUpdateRunSpeeds()
         {
             if (Player.HasBuff(ModContent.BuffType<Bloated>()))
@@ -82,123 +80,99 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
             }
         }
 
+        public override void UpdateBadLifeRegen()
+        {
+            if (!Player.HasBuff(ModContent.BuffType<Starved>())) return;
+
+            if (Player.lifeRegen > 0) Player.lifeRegen = 0;
+            Player.lifeRegenTime = 0;
+            Player.lifeRegen += StarvedLifeRegen;
+        }
+
         public override void OnRespawn()
         {
-            if (CurrentHunger <= HungerSystem.HungerDebuffThreshold_Famished)
-            {
-                CurrentHunger = HungerSystem.HungerDebuffThreshold_Famished;
-            }
+            CurrentHunger = HungerLogic.OnRespawn(CurrentHunger);
         }
 
         public override bool CanUseItem(Item item)
         {
-            bool isFoodBuffItem = item.buffType == BuffID.WellFed ||
-                                  item.buffType == BuffID.WellFed2 ||
-                                  item.buffType == BuffID.WellFed3;
-
-            if (item.consumable && isFoodBuffItem)
+            bool cannotEat = Player.HasBuff(ModContent.BuffType<Nauseous>()) || Player.HasBuff(ModContent.BuffType<Fainted>());
+            if (cannotEat && item.consumable && TierOf(item.buffType) != WellFedTier.None)
             {
-                if (Player.HasBuff(ModContent.BuffType<Nauseous>()) || Player.HasBuff(ModContent.BuffType<Fainted>()))
-                {
-                    return false; 
-                }
-                foodItemConsumedThisTick = true;
-                return true; 
+                return false;
             }
             return base.CanUseItem(item);
         }
 
+        // Called by GlobalItemChanges.OnConsumeItem when this player eats something.
+        public void OnFoodEaten(Item item)
+        {
+            if (Player.whoAmI != Main.myPlayer) return;
+
+            int restored = HungerLogic.RestoreAmount(TierOf(item.buffType));
+            if (restored == 0) return;
+
+            CurrentHunger = HungerLogic.Clamp(CurrentHunger + restored);
+            _shortenFoodBuffs = HungerLogic.ShouldShortenFoodBuff(CurrentHunger);
+        }
+
         public override void PostUpdateBuffs()
         {
-            if (foodItemConsumedThisTick)
+            // Done on the next update so the food buff has already been applied
+            if (!_shortenFoodBuffs) return;
+            _shortenFoodBuffs = false;
+
+            for (int i = 0; i < Player.buffType.Length; i++)
             {
-
-                foodItemConsumedThisTick = false;
-
-                int hungerRestored = 0;
-
-                if (Player.HasBuff(BuffID.WellFed3) && Player.buffTime[Player.FindBuffIndex(BuffID.WellFed3)] > 1) 
+                if (TierOf(Player.buffType[i]) != WellFedTier.None)
                 {
-                    hungerRestored = 350;
-                }
-                else if (Player.HasBuff(BuffID.WellFed2) && Player.buffTime[Player.FindBuffIndex(BuffID.WellFed2)] > 1)
-                {
-                    hungerRestored = 250;
-                }
-                else if (Player.HasBuff(BuffID.WellFed) && Player.buffTime[Player.FindBuffIndex(BuffID.WellFed)] > 1)
-                {
-                    hungerRestored = 150;
-                }
-
-                if (hungerRestored > 0)
-                {
-                    CurrentHunger += hungerRestored;
-                    CurrentHunger = Utils.Clamp(CurrentHunger, 0, HungerSystem.AbsoluteMaxHunger);
-
-                    if (CurrentHunger < HungerSystem.HungerDebuffThreshold_Peckish)
-                    {
-                        for (int i = 0; i < Player.buffType.Length; i++)
-                        {
-                            int buffType = Player.buffType[i];
-                            if (buffType == BuffID.WellFed ||
-                                buffType == BuffID.WellFed2 ||
-                                buffType == BuffID.WellFed3)
-                            {
-                                Player.buffTime[i] = 3 * 60;
-                            }
-                        }
-                    }
+                    Player.buffTime[i] = ShortFoodBuffTicks;
                 }
             }
         }
 
+        private static WellFedTier TierOf(int buffType) => buffType switch
+        {
+            BuffID.WellFed3 => WellFedTier.ExquisitelyStuffed,
+            BuffID.WellFed2 => WellFedTier.PlentySatisfied,
+            BuffID.WellFed => WellFedTier.WellFed,
+            _ => WellFedTier.None,
+        };
 
         private void ApplyHungerDebuffs()
         {
-            int buffDuration = 61; 
+            int? current = HungerLogic.GetStatus(CurrentHunger) switch
+            {
+                HungerStatus.Bloated => ModContent.BuffType<Bloated>(),
+                HungerStatus.Full => ModContent.BuffType<Full>(),
+                HungerStatus.Peckish => ModContent.BuffType<Peckish>(),
+                HungerStatus.Hungry => ModContent.BuffType<Hungry>(),
+                HungerStatus.Famished => ModContent.BuffType<Famished>(),
+                HungerStatus.Starved => ModContent.BuffType<Starved>(),
+                _ => null,
+            };
 
-            Player.ClearBuff(ModContent.BuffType<Full>());
-            Player.ClearBuff(ModContent.BuffType<Peckish>());
-            Player.ClearBuff(ModContent.BuffType<Hungry>());
-            Player.ClearBuff(ModContent.BuffType<Famished>());
-            Player.ClearBuff(ModContent.BuffType<Starved>());
-
-            if (CurrentHunger >= HungerSystem.MaxHungerDebuffThreshold_Bloated)
+            foreach (int debuff in new[]
             {
-                Player.AddBuff(ModContent.BuffType<Bloated>(), buffDuration);
-            }
-            else if (CurrentHunger >= HungerSystem.MaxHungerDebuffThreshold_Full)
+                ModContent.BuffType<Bloated>(), ModContent.BuffType<Full>(), ModContent.BuffType<Peckish>(),
+                ModContent.BuffType<Hungry>(), ModContent.BuffType<Famished>(), ModContent.BuffType<Starved>(),
+            })
             {
-                Player.AddBuff(ModContent.BuffType<Full>(), buffDuration);
-            }
-            else if (CurrentHunger <= HungerSystem.HungerDebuffThreshold_Starved)
-            {
-                Player.AddBuff(ModContent.BuffType<Starved>(), buffDuration);
-            }
-            else if (CurrentHunger <= HungerSystem.HungerDebuffThreshold_Famished)
-            {
-                Player.AddBuff(ModContent.BuffType<Famished>(), buffDuration);
-            }
-            else if (CurrentHunger <= HungerSystem.HungerDebuffThreshold_Hungry)
-            {
-                Player.AddBuff(ModContent.BuffType<Hungry>(), buffDuration);
-            }
-            else if (CurrentHunger <= HungerSystem.HungerDebuffThreshold_Peckish)
-            {
-                Player.AddBuff(ModContent.BuffType<Peckish>(), buffDuration);
+                if (debuff == current) Player.AddBuff(debuff, DebuffDurationTicks);
+                else Player.ClearBuff(debuff);
             }
         }
 
         public override void SaveData(TagCompound tag)
         {
-            tag.Add("CurrentHunger", CurrentHunger);
+            tag["CurrentHunger"] = CurrentHunger;
         }
 
         public override void LoadData(TagCompound tag)
         {
             if (tag.ContainsKey("CurrentHunger"))
             {
-                CurrentHunger = tag.GetFloat("CurrentHunger");
+                CurrentHunger = HungerLogic.Clamp(tag.GetFloat("CurrentHunger"));
             }
         }
     }

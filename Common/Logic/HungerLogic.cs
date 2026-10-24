@@ -37,8 +37,9 @@ namespace ChallengingTerrariaMod.Common.Logic
         public const float FamishedThreshold = 300;
         public const float StarvedThreshold = 0;
 
+        public const float DrainIdle = 1f; // Hunger lost per second while standing still
         public const float DrainMoving = 2f; // Hunger lost per second while moving
-        public const float DrainNourished = 1f; // Hunger lost per second while moving with Nourished
+        public const float NourishedDrainFactor = 0.5f;
 
         public const float HungerAfterVomiting = 400;
         public const float MinHungerOnRespawn = FamishedThreshold;
@@ -57,8 +58,9 @@ namespace ChallengingTerrariaMod.Common.Logic
         // Hunger lost in one update (one second).
         public static float Drain(bool isMoving, bool nourished, float multiplier)
         {
-            if (!isMoving) return 0f;
-            return (nourished ? DrainNourished : DrainMoving) * multiplier;
+            float drain = isMoving ? DrainMoving : DrainIdle;
+            if (nourished) drain *= NourishedDrainFactor;
+            return drain * multiplier;
         }
 
         public static float Clamp(float hunger) => Math.Clamp(hunger, 0f, AbsoluteMax);
