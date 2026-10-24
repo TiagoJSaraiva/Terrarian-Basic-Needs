@@ -242,7 +242,7 @@ namespace ChallengingTerrariaMod.Content.Systems
             {
                 if (currentTemperature > ComfortableTemperature)
                 {
-                    if (player.HasBuff(BuffID.Warmth)) increments.Add(-4);
+                    if (player.HasBuff(BuffID.Warmth)) increments.Add(0);
                     increments.Add(-20);
                 }
             }
@@ -251,7 +251,7 @@ namespace ChallengingTerrariaMod.Content.Systems
             {
                 if (currentTemperature < ComfortableTemperature)
                 {
-                    if (player.HasBuff(BuffID.ObsidianSkin)) increments.Add(-3);
+                    if (player.HasBuff(BuffID.ObsidianSkin)) increments.Add(0);
                     increments.Add(20);
                 }
             }
