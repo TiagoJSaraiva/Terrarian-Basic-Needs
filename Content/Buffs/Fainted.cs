@@ -1,10 +1,10 @@
 ﻿using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
-using ChallengingTerrariaMod.Content.Systems.Players; 
+using Terraria.ModLoader;
 
 namespace ChallengingTerrariaMod.Content.Buffs
 {
+    // Item use is blocked in RestPlayer.CanUseItem and the "Zzz" effect is spawned by RestPlayer
     public class Fainted : ModBuff
     {
         public override void SetStaticDefaults()
@@ -15,25 +15,14 @@ namespace ChallengingTerrariaMod.Content.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            RestPlayer restPlayer = player.GetModPlayer<RestPlayer>();
-            restPlayer.FaintedVFXDrawing();
             player.controlRight = false;
             player.controlLeft = false;
             player.controlDown = false;
-            player.immuneAlpha = 110;
             player.controlJump = false;
             player.controlHook = false;
             player.controlMount = false;
             player.controlTorch = false;
-        }
-    }
-
-    public class FaintedPlayer : ModPlayer
-    {
-        public override bool CanUseItem(Item item)
-        {
-            if (Player.HasBuff(ModContent.BuffType<Fainted>())) return false;
-            return base.CanUseItem(item);
+            player.immuneAlpha = 110;
         }
     }
 }

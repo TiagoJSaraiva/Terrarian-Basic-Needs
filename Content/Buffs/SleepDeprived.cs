@@ -1,38 +1,17 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ChallengingTerrariaMod.Content.Systems;
-using Terraria.DataStructures;
 
 namespace ChallengingTerrariaMod.Content.Buffs
 {
+    // Rest is lost even during the day while this is active (see RestLogic.Delta)
     public class SleepDeprived : ModBuff
     {
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;
             BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
-        }
-    }
-
-    public class SleepDeprivedPlayer : ModPlayer
-    {
-        public int timeLeft_SleepDeprived = 0;
-
-        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
-        {
-            for (int i = 0; i < Player.buffType.Length; i++)
-            {
-                if (Player.buffType[i] == ModContent.BuffType<SleepDeprived>())
-                {
-                    timeLeft_SleepDeprived = Player.buffTime[i];
-                    break;
-                }
-            }
-        }
-        public override void OnRespawn()
-        {
-            Player.AddBuff(ModContent.BuffType<SleepDeprived>(), timeLeft_SleepDeprived);
+            Main.persistentBuff[Type] = true; // Survives death
         }
     }
 }

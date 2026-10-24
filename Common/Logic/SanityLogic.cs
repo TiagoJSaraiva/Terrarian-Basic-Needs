@@ -19,7 +19,7 @@ namespace ChallengingTerrariaMod.Common.Logic
         public bool LowHealth;
         public bool EclipseOrBloodMoon;
         public bool InOverworld;
-        public int TownNPCs;
+        public float TownNPCs; // Terraria counts some NPCs as fractions
         public float Multiplier;
     }
 
@@ -37,7 +37,7 @@ namespace ChallengingTerrariaMod.Common.Logic
 
         public const float TownGain = 9;
         public const float OverworldGain = 2;
-        public const int MinTownNPCsForGain = 3;
+        public const float TownNPCsForGain = 2; // Needs more than this
 
         // Sanity lost per second, without and with the Armored Mind buff
         private static readonly LossFactors NormalLoss = new(hostileZone: 4f, lowHealth: 9f, eclipseOrBloodMoon: 7f);
@@ -73,7 +73,7 @@ namespace ChallengingTerrariaMod.Common.Logic
             float delta = 0f;
 
             if (context.InHostileZone) delta -= loss.HostileZone * context.Multiplier;
-            if (context.TownNPCs >= MinTownNPCsForGain) delta += TownGain;
+            if (context.TownNPCs > TownNPCsForGain) delta += TownGain;
             if (context.LowHealth) delta -= loss.LowHealth * context.Multiplier;
             if (context.EclipseOrBloodMoon) delta -= loss.EclipseOrBloodMoon * context.Multiplier;
             if (context.InOverworld) delta += OverworldGain;

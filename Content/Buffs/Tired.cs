@@ -1,15 +1,13 @@
-﻿
+﻿using ChallengingTerrariaMod.Common.Logic;
 using Terraria;
-using Terraria.ModLoader;
-using Terraria.Localization;
 using Terraria.ID;
-using ChallengingTerrariaMod.Content.Systems;
+using Terraria.ModLoader;
 
 namespace ChallengingTerrariaMod.Content.Buffs
 {
+    // The life regeneration penalty is applied in RestPlayer.UpdateBadLifeRegen
     public class Tired : ModBuff
     {
-
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;
@@ -21,19 +19,8 @@ namespace ChallengingTerrariaMod.Content.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.manaRegenBonus -= 25;
-            player.statLifeMax2 = RestSystem.RoundValue(player.statLifeMax2, 1.2f);
-            player.statManaMax2 = RestSystem.RoundValue(player.statManaMax2, 1.2f);
-        }
-    }
-
-    public class TiredPlayer : ModPlayer
-    {
-        public override void UpdateBadLifeRegen()
-        {
-            if (Player.HasBuff(ModContent.BuffType<Tired>()) && Player.lifeRegen > 0)
-            {
-                Player.lifeRegen = (int)(Player.lifeRegen * 0.8f);
-            }
+            player.statLifeMax2 = RestLogic.RoundDownToStep(player.statLifeMax2, 1.2f);
+            player.statManaMax2 = RestLogic.RoundDownToStep(player.statManaMax2, 1.2f);
         }
     }
 }

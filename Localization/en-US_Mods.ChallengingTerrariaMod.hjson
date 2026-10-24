@@ -261,3 +261,7 @@ UI: {
 		HintHot: Find something to cool you down! Like water, for example.
 	}
 }
+
+Messages: {
+	SleepDeprived: Your sleep routine has been terrible. Your body is starting to feel the consequences.
+}

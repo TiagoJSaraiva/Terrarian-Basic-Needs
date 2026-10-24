@@ -20,7 +20,7 @@ namespace ChallengingTerrariaMod.Common.Logic
         public bool TimeAccelerated; // Main.dayRate > 1 (everyone in bed, enchanted sundial...)
         public bool SleepDeprived;
         public bool Caffeinated;
-        public int TownNPCs;
+        public float TownNPCs; // Terraria counts some NPCs as fractions
         public float Multiplier;
     }
 
@@ -40,7 +40,7 @@ namespace ChallengingTerrariaMod.Common.Logic
         public const float GainPerSecond = 4;
         public const float GainPerSecondAccelerated = 24;
 
-        public const int MinTownNPCsForGoodSleep = 2;
+        public const float MinTownNPCsForGoodSleep = 2;
 
         public const float RestAfterFainting = ExhaustedThreshold;
         public const int FaintedDurationSeconds = 10;
@@ -49,7 +49,11 @@ namespace ChallengingTerrariaMod.Common.Logic
         public const int SleepDeprivationLimit = 2400;
         public const int SleepDeprivedDurationSeconds = 600;
         public const int TimeNoSleepRecoveredPerSecond = 30;
-        public const int TimeNoSleepCapWhileSleeping = 1200;
+
+        // Life regeneration multipliers while tired. Sleep Deprived counts as Exhausted.
+        public const float TiredLifeRegenFactor = 0.8f;
+        public const float SleepyLifeRegenFactor = 0.6f;
+        public const float ExhaustedLifeRegenFactor = 0.4f;
 
         public static RestStatus GetStatus(float rest)
         {
@@ -93,7 +97,17 @@ namespace ChallengingTerrariaMod.Common.Logic
         public static float Clamp(float rest) => Math.Clamp(rest, Min, Max);
 
         public static int TimeNoSleepWhileSleeping(int timeNoSleep)
-            => Math.Clamp(timeNoSleep - TimeNoSleepRecoveredPerSecond, 0, TimeNoSleepCapWhileSleeping);
+            => Math.Max(0, timeNoSleep - TimeNoSleepRecoveredPerSecond);
+
+        // Positive life regeneration is multiplied by this. Uses buffs so it also works for other players.
+        public static float LifeRegenFactor(bool tired, bool sleepy, bool exhausted, bool sleepDeprived)
+        {
+            float factor = 1f;
+            if (exhausted || sleepDeprived) factor *= ExhaustedLifeRegenFactor;
+            if (sleepy) factor *= SleepyLifeRegenFactor;
+            if (tired) factor *= TiredLifeRegenFactor;
+            return factor;
+        }
 
         // Divides a max life/mana value and rounds it down to a multiple of step (life crystals give 20 each).
         public static int RoundDownToStep(int value, float divisor, int step = 20)

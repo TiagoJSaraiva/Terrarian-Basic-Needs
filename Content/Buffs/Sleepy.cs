@@ -1,12 +1,11 @@
-﻿
+﻿using ChallengingTerrariaMod.Common.Logic;
 using Terraria;
-using Terraria.ModLoader;
-using Terraria.Localization;
 using Terraria.ID;
-using ChallengingTerrariaMod.Content.Systems;
+using Terraria.ModLoader;
 
 namespace ChallengingTerrariaMod.Content.Buffs
 {
+    // The life regeneration penalty is applied in RestPlayer.UpdateBadLifeRegen
     public class Sleepy : ModBuff
     {
         public override void SetStaticDefaults()
@@ -20,19 +19,8 @@ namespace ChallengingTerrariaMod.Content.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.manaRegenBonus -= 35;
-            player.statLifeMax2 = RestSystem.RoundValue(player.statLifeMax2, 1.4f);
-            player.statManaMax2 = RestSystem.RoundValue(player.statManaMax2, 1.4f);
-        }
-    }
-
-    public class SleepyPlayer : ModPlayer
-    {
-        public override void UpdateBadLifeRegen()
-        {
-            if (Player.HasBuff(ModContent.BuffType<Sleepy>()) && Player.lifeRegen > 0)
-            {
-                Player.lifeRegen = (int)(Player.lifeRegen * 0.6f);
-            }
+            player.statLifeMax2 = RestLogic.RoundDownToStep(player.statLifeMax2, 1.4f);
+            player.statManaMax2 = RestLogic.RoundDownToStep(player.statManaMax2, 1.4f);
         }
     }
 }

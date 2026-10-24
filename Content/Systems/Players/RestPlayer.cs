@@ -1,157 +1,163 @@
-﻿using Terraria;
+﻿using ChallengingTerrariaMod.Common;
+using ChallengingTerrariaMod.Common.Logic;
+using ChallengingTerrariaMod.Content.Buffs;
+using ChallengingTerrariaMod.Content.ModConfigs;
+using ChallengingTerrariaMod.Content.Projectiles;
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Terraria.ID;
-using ChallengingTerrariaMod.Content.Projectiles;
-using ChallengingTerrariaMod.Content.Buffs;
-using Terraria.DataStructures;
-using Microsoft.Xna.Framework;
-using System;
-using Terraria.GameInput;
-using System.Collections.Generic;
-using Terraria.UI;
 
 namespace ChallengingTerrariaMod.Content.Systems.Players
 {
     public class RestPlayer : ModPlayer
     {
-        public float CurrentRest;
-        public int timeNoSleep;
-        public int faintedThreshold = 0;
-        public int exhaustedThreshold = 300;
-        public int sleepyThreshold = 600;
-        public int tiredThreshold = 900;
+        private const int DebuffDurationTicks = 61; // Renewed every second while the condition lasts
+        private const int BadRestDurationTicks = 60;
+        private const int ConfusedDurationTicks = 2 * 60;
+        private const float ExhaustedConfusionChance = 0.05f;
 
+        public float CurrentRest;
+        public int timeNoSleep; // Seconds awake; reaching SleepDeprivationLimit gives Sleep Deprived
+
+        private bool _faintedLastUpdate;
 
         public override void Initialize()
         {
-            CurrentRest = 1200;
+            CurrentRest = RestLogic.Max;
             timeNoSleep = 0;
         }
 
-        public void FaintedVFXDrawing()
+        // The owner's client simulates rest; buffs are synced to other players by vanilla.
+        private bool IsSimulated => Player.whoAmI == Main.myPlayer && !Player.dead && !Player.ghost;
+
+        private bool IsFainted => Player.HasBuff(ModContent.BuffType<Fainted>());
+
+        public override void PostUpdate()
         {
-            if (Main.myPlayer != Player.whoAmI) return; 
+            if (!IsSimulated) return;
 
-            Vector2 spawnPos = Player.Center + new Vector2(0, -40); 
+            if (IsFainted) EnsureFaintedVFX();
 
-            int type = ModContent.ProjectileType<FaintedVFX>();
+            if (Main.GameUpdateCount % RestLogic.UpdateRate != 0) return;
 
-            bool alreadyExists = false;
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            if (!IsFainted)
             {
-                Projectile proj = Main.projectile[i];
-                if (proj.active && proj.owner == Player.whoAmI && proj.type == type)
-                {
-                    alreadyExists = true;
-                    proj.Center = spawnPos;
-                    proj.timeLeft = 2; 
-                }
+                timeNoSleep++;
+                ApplyRestDebuffs();
             }
-
-            if (!alreadyExists)
-            {
-                Projectile.NewProjectile(
-                Player.GetSource_FromThis(),
-                spawnPos,
-                Vector2.Zero,
-                type,
-                0,
-                0,
-                Player.whoAmI
-                );
-            }
+            UpdateRest();
         }
 
-        public override void ResetEffects()
+        private void UpdateRest()
         {
-
-        }
-
-        public override bool CanUseItem(Item item)
-        {
-            if (Player.HasBuff(ModContent.BuffType<Fainted>())) return false;
-            return base.CanUseItem(item);
-        }
-
-        public override void PostUpdateBuffs()
-        {
-            if (!Player.HasBuff(ModContent.BuffType<Fainted>()))
+            var context = new RestContext
             {
-                Player.immuneAlpha = 0;
-            }
+                IsSleeping = Player.sleeping.isSleeping,
+                IsSitting = Player.sitting.isSitting,
+                IsDayTime = Main.dayTime,
+                TimeAccelerated = Main.dayRate > 1,
+                SleepDeprived = Player.HasBuff(ModContent.BuffType<SleepDeprived>()),
+                Caffeinated = Player.HasBuff(ModContent.BuffType<Cafeinated>()),
+                TownNPCs = Player.townNPCs,
+                Multiplier = ModContent.GetInstance<ModConfigServer>().RestMultiplier,
+            };
 
-            if (Main.GameUpdateCount % RestSystem.restUpdateRate == 0)
-            {
-                if (Player.active && !Player.dead && !Player.ghost && !Player.HasBuff(ModContent.BuffType<Fainted>()))
-                {
-                    timeNoSleep++;
-                    ApplyRestDebuffs();
-                }
-            }
-        }
+            CurrentRest = RestLogic.Clamp(CurrentRest + RestLogic.Delta(context, out bool badRest));
 
-
-        public override void SaveData(TagCompound tag)
-        {
-            tag.Add("CurrentRest", CurrentRest);
-            tag.Add("timeNoSleep", timeNoSleep);
-        }
-
-        public override void LoadData(TagCompound tag)
-        {
-            if (tag.ContainsKey("CurrentRest"))
-            {
-                CurrentRest = tag.GetFloat("CurrentRest");
-            }
-            else
-            {
-                CurrentRest = 0; 
-            }
-            if (tag.ContainsKey("timeNoSleep"))
-            {
-                timeNoSleep = tag.GetInt("timeNoSleep");
-            }
-            else
-            {
-                timeNoSleep = 0; 
-            }
+            if (badRest) Player.AddBuff(ModContent.BuffType<BadRest>(), BadRestDurationTicks);
+            if (context.IsSleeping) timeNoSleep = RestLogic.TimeNoSleepWhileSleeping(timeNoSleep);
         }
 
         private void ApplyRestDebuffs()
         {
-            if (timeNoSleep >= 2400) 
+            if (timeNoSleep >= RestLogic.SleepDeprivationLimit)
             {
-                Main.NewText("Your sleep routine has been terrible. Your body is starting to feel the consequences.", Color.LightBlue);
-                Player.AddBuff(ModContent.BuffType<SleepDeprived>(), 600 * 60);
+                Main.NewText(Text.Get("Messages.SleepDeprived"), Color.LightBlue);
+                Player.AddBuff(ModContent.BuffType<SleepDeprived>(), RestLogic.SleepDeprivedDurationSeconds * 60);
                 timeNoSleep = 0;
             }
 
-            if (Player.HasBuff(ModContent.BuffType<Exhausted>()) && Main.rand.NextFloat() < 0.05f && !Player.HasBuff(BuffID.Confused))
+            if (Player.HasBuff(ModContent.BuffType<Exhausted>()) && !Player.HasBuff(BuffID.Confused) && Main.rand.NextFloat() < ExhaustedConfusionChance)
             {
-                Player.AddBuff(BuffID.Confused, 2 * 60);
+                Player.AddBuff(BuffID.Confused, ConfusedDurationTicks);
             }
 
-            Player.ClearBuff(ModContent.BuffType<Tired>());
-            Player.ClearBuff(ModContent.BuffType<Sleepy>());
-            Player.ClearBuff(ModContent.BuffType<Exhausted>());
+            RestStatus status = RestLogic.GetStatus(CurrentRest);
+            int? current = status switch
+            {
+                RestStatus.Tired => ModContent.BuffType<Tired>(),
+                RestStatus.Sleepy => ModContent.BuffType<Sleepy>(),
+                RestStatus.Exhausted => ModContent.BuffType<Exhausted>(),
+                _ => null,
+            };
 
-            if (CurrentRest <= faintedThreshold)
+            foreach (int debuff in new[] { ModContent.BuffType<Tired>(), ModContent.BuffType<Sleepy>(), ModContent.BuffType<Exhausted>() })
             {
-                CurrentRest = exhaustedThreshold;
-                Player.AddBuff(ModContent.BuffType<Fainted>(), 10 * 60);
+                if (debuff == current) Player.AddBuff(debuff, DebuffDurationTicks);
+                else Player.ClearBuff(debuff);
             }
-            else if (CurrentRest <= exhaustedThreshold)
+
+            if (status == RestStatus.Fainted)
             {
-                Player.AddBuff(ModContent.BuffType<Exhausted>(), 61);
+                CurrentRest = RestLogic.RestAfterFainting;
+                Player.AddBuff(ModContent.BuffType<Fainted>(), RestLogic.FaintedDurationSeconds * 60);
             }
-            else if (CurrentRest <= sleepyThreshold)
+        }
+
+        private void EnsureFaintedVFX()
+        {
+            int type = ModContent.ProjectileType<FaintedVFX>();
+            if (Player.ownedProjectileCounts[type] > 0) return;
+
+            // The projectile follows the player and removes itself when Fainted ends
+            Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Top, Vector2.Zero, type, 0, 0, Player.whoAmI);
+        }
+
+        public override void PostUpdateBuffs()
+        {
+            // Fainted makes the player translucent; undo it once, when the buff ends
+            bool fainted = IsFainted;
+            if (_faintedLastUpdate && !fainted) Player.immuneAlpha = 0;
+            _faintedLastUpdate = fainted;
+        }
+
+        public override bool CanUseItem(Item item)
+        {
+            if (IsFainted) return false;
+            return base.CanUseItem(item);
+        }
+
+        public override void UpdateBadLifeRegen()
+        {
+            if (Player.lifeRegen <= 0) return;
+
+            float factor = RestLogic.LifeRegenFactor(
+                tired: Player.HasBuff(ModContent.BuffType<Tired>()),
+                sleepy: Player.HasBuff(ModContent.BuffType<Sleepy>()),
+                exhausted: Player.HasBuff(ModContent.BuffType<Exhausted>()),
+                sleepDeprived: Player.HasBuff(ModContent.BuffType<SleepDeprived>()));
+
+            Player.lifeRegen = (int)(Player.lifeRegen * factor);
+        }
+
+        public override void SaveData(TagCompound tag)
+        {
+            tag["CurrentRest"] = CurrentRest;
+            tag["timeNoSleep"] = timeNoSleep;
+        }
+
+        // Missing keys keep the Initialize() values (fully rested) instead of 0, which made the player faint on load.
+        public override void LoadData(TagCompound tag)
+        {
+            if (tag.ContainsKey("CurrentRest"))
             {
-                Player.AddBuff(ModContent.BuffType<Sleepy>(), 61);
+                CurrentRest = RestLogic.Clamp(tag.GetFloat("CurrentRest"));
             }
-            else if (CurrentRest <= tiredThreshold)
+            if (tag.ContainsKey("timeNoSleep"))
             {
-                Player.AddBuff(ModContent.BuffType<Tired>(), 61);
+                timeNoSleep = tag.GetInt("timeNoSleep");
             }
         }
     }

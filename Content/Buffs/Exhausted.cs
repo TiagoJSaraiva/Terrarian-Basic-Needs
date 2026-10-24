@@ -1,11 +1,11 @@
-﻿using Terraria;
-using Terraria.ModLoader;
+﻿using ChallengingTerrariaMod.Common.Logic;
+using Terraria;
 using Terraria.ID;
-using ChallengingTerrariaMod.Content.Systems;
-
+using Terraria.ModLoader;
 
 namespace ChallengingTerrariaMod.Content.Buffs
 {
+    // The life regeneration penalty and the random confusion are applied in RestPlayer
     public class Exhausted : ModBuff
     {
         public override void SetStaticDefaults()
@@ -19,19 +19,8 @@ namespace ChallengingTerrariaMod.Content.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.manaRegenBonus -= 50;
-            player.statLifeMax2 = RestSystem.RoundValue(player.statLifeMax2, 1.6f);
-            player.statManaMax2 = RestSystem.RoundValue(player.statManaMax2, 1.6f);
-        }
-    }
-
-    public class ExhaustedPlayer : ModPlayer
-    {
-        public override void UpdateBadLifeRegen()
-        {
-            if ((Player.HasBuff(ModContent.BuffType<SleepDeprived>()) || Player.HasBuff(ModContent.BuffType<Exhausted>())) && Player.lifeRegen > 0)
-            {
-                Player.lifeRegen = (int)(Player.lifeRegen * 0.4f);
-            }
+            player.statLifeMax2 = RestLogic.RoundDownToStep(player.statLifeMax2, 1.6f);
+            player.statManaMax2 = RestLogic.RoundDownToStep(player.statManaMax2, 1.6f);
         }
     }
 }

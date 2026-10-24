@@ -74,7 +74,7 @@ namespace ChallengingTerrariaMod.Tests
         {
             var context = Awake(day: false);
             context.IsSleeping = true;
-            context.TownNPCs = 1;
+            context.TownNPCs = 1.5f;
             Assert.Equal(1f, RestLogic.Delta(context, out bool badRest));
             Assert.True(badRest);
 
@@ -108,10 +108,24 @@ namespace ChallengingTerrariaMod.Tests
             Assert.Equal(expected, RestLogic.TimeNoSleepWhileSleeping(timeNoSleep));
         }
 
+        // A8: one second of sleep used to cut the progress towards Sleep Deprived from 2399 down to 1200
         [Fact]
-        public void TimeNoSleepWhileSleeping_CurrentBehavior_A8()
+        public void TimeNoSleepWhileSleeping_DoesNotJumpDown()
         {
-            Assert.Equal(1200, RestLogic.TimeNoSleepWhileSleeping(2399));
+            Assert.Equal(2369, RestLogic.TimeNoSleepWhileSleeping(2399));
+        }
+
+        [Theory]
+        [InlineData(false, false, false, false, 1f)]
+        [InlineData(true, false, false, false, 0.8f)]
+        [InlineData(false, true, false, false, 0.6f)]
+        [InlineData(false, false, true, false, 0.4f)]
+        [InlineData(false, false, false, true, 0.4f)]
+        [InlineData(false, false, true, true, 0.4f)] // Exhausted and Sleep Deprived don't stack
+        [InlineData(true, false, false, true, 0.32f)]
+        public void LifeRegenFactor_DependsOnTiredness(bool tired, bool sleepy, bool exhausted, bool deprived, float expected)
+        {
+            Assert.Equal(expected, RestLogic.LifeRegenFactor(tired, sleepy, exhausted, deprived), 3);
         }
 
         [Theory]

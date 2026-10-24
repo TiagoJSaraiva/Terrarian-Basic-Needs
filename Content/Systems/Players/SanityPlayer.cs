@@ -51,7 +51,7 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
 
         public override void PostUpdateBuffs()
         {
-            if (Main.GameUpdateCount % RestSystem.restUpdateRate == 0) 
+            if (Main.GameUpdateCount % Common.Logic.SanityLogic.UpdateRate == 0) 
             {
                 if (Player.active && !Player.dead && !Player.ghost)
                 {

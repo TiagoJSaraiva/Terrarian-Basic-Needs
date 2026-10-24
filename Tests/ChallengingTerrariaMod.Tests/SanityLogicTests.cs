@@ -58,9 +58,10 @@ namespace ChallengingTerrariaMod.Tests
         }
 
         [Theory]
-        [InlineData(2, 0f)]
-        [InlineData(3, 9f)]
-        public void Delta_TownNeedsAtLeastThreeNPCs(int townNPCs, float expected)
+        [InlineData(2f, 0f)]
+        [InlineData(2.5f, 9f)]
+        [InlineData(3f, 9f)]
+        public void Delta_TownNeedsMoreThanTwoNPCs(float townNPCs, float expected)
         {
             var context = Context();
             context.TownNPCs = townNPCs;
