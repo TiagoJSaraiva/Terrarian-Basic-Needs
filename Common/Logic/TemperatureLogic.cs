@@ -52,6 +52,10 @@ namespace ChallengingTerrariaMod.Common.Logic
         // Pull back towards comfortable when the environment is the opposite of how the player feels
         private const int EnvironmentRecovery = 20;
 
+        // Potion modifiers on that pull back. Both are 0: the potions don't affect temperature (author's decision).
+        public const int WarmthPotionModifier = 0;
+        public const int ObsidianSkinModifier = 0;
+
         public static TemperatureStatus GetStatus(int temperature)
         {
             if (temperature <= FreezingThreshold) return TemperatureStatus.Freezing;
@@ -107,36 +111,43 @@ namespace ChallengingTerrariaMod.Common.Logic
                 warmEnvironment = true;
             }
 
-            // A cold place cools down an overheated player (and vice versa).
-            // The potions only change how fast that happens: Warmth slows the cooling,
-            // Obsidian Skin slows the warming. They do not protect against cold or heat.
+            // A cold place cools down an overheated player (and vice versa)
             if (coldEnvironment && currentTemperature > Comfortable)
             {
-                if (context.HasWarmthPotion) increment += 4;
+                if (context.HasWarmthPotion) increment += WarmthPotionModifier;
                 increment -= EnvironmentRecovery;
             }
             if (warmEnvironment && currentTemperature < Comfortable)
             {
-                if (context.HasObsidianSkin) increment -= 3;
+                if (context.HasObsidianSkin) increment += ObsidianSkinModifier;
                 increment += EnvironmentRecovery;
             }
 
             return increment;
         }
 
-        public static int ApplyMultiplier(int increment, float multiplier) => increment * (int)multiplier;
+        // Scales the environment increment by the config multiplier. Temperature is an integer, so the fraction
+        // that doesn't fit is kept in remainder and added on the next update (0.5 x -3 = -1, -2, -1, -2...).
+        public static int ApplyMultiplier(int increment, float multiplier, ref float remainder)
+        {
+            float scaled = increment * multiplier + remainder;
+            int whole = (int)scaled; // Truncates towards zero, so the remainder keeps the sign of the change
+            remainder = scaled - whole;
+            return whole;
+        }
 
         // New temperature after one update. Without any environmental change, it drifts back to comfortable.
-        public static int Step(int currentTemperature, int increment)
+        public static int Step(int currentTemperature, int environmentIncrement, float multiplier, ref float remainder)
         {
-            int temperature = currentTemperature + increment;
-
-            if (increment == 0)
+            if (environmentIncrement == 0)
             {
-                if (temperature > Comfortable) temperature = Math.Max(Comfortable, temperature - NormalizationRate);
-                else if (temperature < Comfortable) temperature = Math.Min(Comfortable, temperature + NormalizationRate);
+                remainder = 0f;
+                if (currentTemperature > Comfortable) return Math.Max(Comfortable, currentTemperature - NormalizationRate);
+                if (currentTemperature < Comfortable) return Math.Min(Comfortable, currentTemperature + NormalizationRate);
+                return currentTemperature;
             }
 
+            int temperature = currentTemperature + ApplyMultiplier(environmentIncrement, multiplier, ref remainder);
             return Math.Clamp(temperature, Min, Max);
         }
     }

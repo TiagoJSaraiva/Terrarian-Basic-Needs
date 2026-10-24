@@ -1,3 +1,4 @@
+using System;
 using ChallengingTerrariaMod.Common.Logic;
 using Xunit;
 
@@ -110,46 +111,62 @@ namespace ChallengingTerrariaMod.Tests
             Assert.Equal(-8 + 20, TemperatureLogic.EnvironmentIncrement(context, 700));
         }
 
-        // The potions only change how fast an overheated/frozen player recovers (kept on purpose).
+        // Author's decision: the potions don't change temperature at all.
         [Fact]
-        public void EnvironmentIncrement_WarmthPotion_SlowsCoolingWhenHot()
+        public void EnvironmentIncrement_Potions_HaveNoEffect()
         {
-            var context = Day();
-            context.InWater = true;
-            context.HasWarmthPotion = true;
-            Assert.Equal(-16, TemperatureLogic.EnvironmentIncrement(context, 1500));
-            Assert.Equal(0, TemperatureLogic.EnvironmentIncrement(context, 700));
-        }
+            var cold = Day();
+            cold.InWater = true;
+            var warm = Day();
+            warm.NearHeatSource = true;
+            int coldWithout = TemperatureLogic.EnvironmentIncrement(cold, 1500);
+            int warmWithout = TemperatureLogic.EnvironmentIncrement(warm, 700);
 
-        [Fact]
-        public void EnvironmentIncrement_ObsidianSkin_SlowsWarmingWhenCold()
-        {
-            var context = Day();
-            context.NearHeatSource = true;
-            context.HasObsidianSkin = true;
-            Assert.Equal(17, TemperatureLogic.EnvironmentIncrement(context, 700));
-            Assert.Equal(0, TemperatureLogic.EnvironmentIncrement(context, 1500));
+            cold.HasWarmthPotion = cold.HasObsidianSkin = true;
+            warm.HasWarmthPotion = warm.HasObsidianSkin = true;
+
+            Assert.Equal(coldWithout, TemperatureLogic.EnvironmentIncrement(cold, 1500));
+            Assert.Equal(warmWithout, TemperatureLogic.EnvironmentIncrement(warm, 700));
         }
 
         [Theory]
         [InlineData(-8, 1f, -8)]
         [InlineData(-8, 2f, -16)]
-        [InlineData(-8, 0.5f, 0)] // A1: fractional multipliers are truncated
-        [InlineData(-8, 1.9f, -8)]
-        public void ApplyMultiplier_CurrentBehavior_A1(int increment, float multiplier, int expected)
+        [InlineData(-8, 0.5f, -4)] // A1: used to be 0, the multiplier was truncated to an integer
+        [InlineData(-8, 1.5f, -12)] // A1: used to be -8
+        [InlineData(30, 0.25f, 7)]
+        public void ApplyMultiplier_ScalesIncrement(int increment, float multiplier, int expected)
         {
-            Assert.Equal(expected, TemperatureLogic.ApplyMultiplier(increment, multiplier));
+            float remainder = 0f;
+            Assert.Equal(expected, TemperatureLogic.ApplyMultiplier(increment, multiplier, ref remainder));
         }
 
         [Theory]
-        [InlineData(1000, 0, 1000)]
-        [InlineData(1100, 0, 1090)]
-        [InlineData(1005, 0, 1000)]
-        [InlineData(900, 0, 910)]
-        [InlineData(995, 0, 1000)]
-        public void Step_WithoutIncrement_DriftsBackToComfortable(int temperature, int increment, int expected)
+        [InlineData(-3, 0.1f)]
+        [InlineData(-3, 0.5f)]
+        [InlineData(5, 0.3f)]
+        [InlineData(-8, 1.7f)]
+        public void ApplyMultiplier_SmallChangesAddUpOverTime(int increment, float multiplier)
         {
-            Assert.Equal(expected, TemperatureLogic.Step(temperature, increment));
+            float remainder = 0f;
+            int total = 0;
+            for (int i = 0; i < 100; i++) total += TemperatureLogic.ApplyMultiplier(increment, multiplier, ref remainder);
+
+            int expected = (int)Math.Round(increment * multiplier * 100);
+            Assert.InRange(total, expected - 1, expected + 1);
+        }
+
+        [Theory]
+        [InlineData(1000, 1000)]
+        [InlineData(1100, 1090)]
+        [InlineData(1005, 1000)]
+        [InlineData(900, 910)]
+        [InlineData(995, 1000)]
+        public void Step_WithoutIncrement_DriftsBackToComfortable(int temperature, int expected)
+        {
+            float remainder = 0.7f;
+            Assert.Equal(expected, TemperatureLogic.Step(temperature, 0, 1f, ref remainder));
+            Assert.Equal(0f, remainder);
         }
 
         [Theory]
@@ -158,7 +175,17 @@ namespace ChallengingTerrariaMod.Tests
         [InlineData(1990, 30, 2000)]
         public void Step_WithIncrement_AppliesAndClamps(int temperature, int increment, int expected)
         {
-            Assert.Equal(expected, TemperatureLogic.Step(temperature, increment));
+            float remainder = 0f;
+            Assert.Equal(expected, TemperatureLogic.Step(temperature, increment, 1f, ref remainder));
+        }
+
+        [Fact]
+        public void Step_WeakMultiplier_DoesNotNormalizeWhileEnvironmentIsActive()
+        {
+            float remainder = 0f;
+            int temperature = TemperatureLogic.Step(900, -3, 0.1f, ref remainder); // -0.3 is not a whole degree yet
+
+            Assert.Equal(900, temperature); // Must not drift up towards comfortable while it's cold
         }
     }
 }

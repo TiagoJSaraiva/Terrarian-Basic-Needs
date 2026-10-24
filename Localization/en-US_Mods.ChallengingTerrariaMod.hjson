@@ -271,4 +271,5 @@ Messages: {
 
 DeathReasons: {
 	Gloom: "{0} got obliterated"
+	Scorching: "{0} burned to death"
 }

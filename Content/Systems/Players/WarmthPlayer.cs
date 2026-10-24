@@ -1,129 +1,132 @@
-
+using ChallengingTerrariaMod.Common.Logic;
+using ChallengingTerrariaMod.Content.Buffs;
+using ChallengingTerrariaMod.Content.ModConfigs;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Microsoft.Xna.Framework;
-using ChallengingTerrariaMod.Content.Systems;
-using Terraria.DataStructures; 
-
-using ChallengingTerrariaMod.Content.Buffs; 
 
 namespace ChallengingTerrariaMod.Content.Systems.Players
 {
     public class WarmthPlayer : ModPlayer
     {
+        private const int DebuffDurationTicks = 60; // Renewed every second while the condition lasts
+        private const float HeavyRainCloudAlpha = 0.7f;
+
+        private static readonly int[] HeatSourceTiles =
+        {
+            TileID.Furnaces, TileID.Hellforge, TileID.AdamantiteForge, TileID.Fireplace,
+            TileID.GlassKiln, TileID.LihzahrdFurnace, TileID.Campfire,
+        };
+
         public int CurrentTemperature;
-        private int _temperatureBeforeDeath;
-        public int LastTemperatureChange = 0;
+        public int LastTemperatureChange; // Change in the last update, shown as an arrow on the meter
+
+        private float _multiplierRemainder;
 
         public override void Initialize()
         {
-            CurrentTemperature = WarmthSystem.ComfortableTemperature;
-            _temperatureBeforeDeath = WarmthSystem.ComfortableTemperature;
+            CurrentTemperature = TemperatureLogic.Comfortable;
             LastTemperatureChange = 0;
+            _multiplierRemainder = 0f;
         }
 
-        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageReason)
+        // The owner's client simulates temperature; buffs are synced to other players by vanilla.
+        private bool IsSimulated => Player.whoAmI == Main.myPlayer && !Player.dead && !Player.ghost;
+
+        public override void PostUpdate()
         {
-            _temperatureBeforeDeath = CurrentTemperature;
+            if (!IsSimulated || Main.GameUpdateCount % TemperatureLogic.UpdateRate != 0) return;
+
+            var context = new TemperatureContext
+            {
+                InWater = Player.wet && !Player.lavaWet && !Player.honeyWet,
+                IsDayTime = Main.dayTime,
+                InOverworld = Player.ZoneOverworldHeight,
+                InSnow = Player.ZoneSnow,
+                Raining = Main.raining,
+                HeavyRain = Main.cloudAlpha > HeavyRainCloudAlpha,
+                NearHeatSource = IsNearHeatSource(),
+                InBeach = Player.ZoneBeach,
+                InDesert = Player.ZoneDesert,
+                InUnderworld = Player.ZoneUnderworldHeight,
+                InSky = Player.ZoneSkyHeight,
+                HasWarmthPotion = Player.HasBuff(BuffID.Warmth),
+                HasObsidianSkin = Player.HasBuff(BuffID.ObsidianSkin),
+            };
+
+            float multiplier = ModContent.GetInstance<ModConfigServer>().WarmthMultiplier;
+            int increment = TemperatureLogic.EnvironmentIncrement(context, CurrentTemperature);
+            int newTemperature = TemperatureLogic.Step(CurrentTemperature, increment, multiplier, ref _multiplierRemainder);
+
+            LastTemperatureChange = newTemperature - CurrentTemperature;
+            CurrentTemperature = newTemperature;
+
+            ApplyWarmthDebuffs();
+        }
+
+        private bool IsNearHeatSource()
+        {
+            Point center = Player.Center.ToTileCoordinates();
+            int radius = TemperatureLogic.DetectionRadiusTiles;
+
+            for (int x = center.X - radius; x <= center.X + radius; x++)
+            {
+                for (int y = center.Y - radius; y <= center.Y + radius; y++)
+                {
+                    if (!WorldGen.InWorld(x, y)) continue;
+
+                    Tile tile = Main.tile[x, y];
+                    if (tile.HasTile && System.Array.IndexOf(HeatSourceTiles, (int)tile.TileType) >= 0) return true;
+                }
+            }
+            return false;
+        }
+
+        private void ApplyWarmthDebuffs()
+        {
+            int? current = TemperatureLogic.GetStatus(CurrentTemperature) switch
+            {
+                TemperatureStatus.Cold => ModContent.BuffType<Cold>(),
+                TemperatureStatus.VeryCold => ModContent.BuffType<VeryCold>(),
+                TemperatureStatus.Freezing => ModContent.BuffType<Freezing>(),
+                TemperatureStatus.Warm => ModContent.BuffType<Warm>(),
+                TemperatureStatus.Hot => ModContent.BuffType<Hot>(),
+                TemperatureStatus.Scorching => ModContent.BuffType<Scorching>(),
+                _ => null,
+            };
+
+            foreach (int debuff in new[]
+            {
+                ModContent.BuffType<Cold>(), ModContent.BuffType<VeryCold>(), ModContent.BuffType<Freezing>(),
+                ModContent.BuffType<Warm>(), ModContent.BuffType<Hot>(), ModContent.BuffType<Scorching>(),
+            })
+            {
+                if (debuff == current) Player.AddBuff(debuff, DebuffDurationTicks);
+                else Player.ClearBuff(debuff);
+            }
         }
 
         public override void OnRespawn()
         {
-            CurrentTemperature = WarmthSystem.ComfortableTemperature;
+            CurrentTemperature = TemperatureLogic.Comfortable;
             LastTemperatureChange = 0;
+            _multiplierRemainder = 0f;
         }
 
+        // Old saves also contain "TemperatureBeforeDeath" and "LastTemperatureChange"; they were never used and are ignored.
         public override void SaveData(TagCompound tag)
         {
-            tag.Add("CurrentTemperature", CurrentTemperature);
-            tag.Add("TemperatureBeforeDeath", _temperatureBeforeDeath);
-            tag.Add("LastTemperatureChange", LastTemperatureChange);
+            tag["CurrentTemperature"] = CurrentTemperature;
         }
 
         public override void LoadData(TagCompound tag)
         {
             if (tag.ContainsKey("CurrentTemperature"))
             {
-                CurrentTemperature = tag.GetInt("CurrentTemperature");
+                CurrentTemperature = System.Math.Clamp(tag.GetInt("CurrentTemperature"), TemperatureLogic.Min, TemperatureLogic.Max);
             }
-            else
-            {
-                CurrentTemperature = WarmthSystem.ComfortableTemperature;
-            }
-
-            if (tag.ContainsKey("TemperatureBeforeDeath"))
-            {
-                _temperatureBeforeDeath = tag.GetInt("TemperatureBeforeDeath");
-            }
-            else
-            {
-                _temperatureBeforeDeath = WarmthSystem.ComfortableTemperature;
-            }
-
-            if (tag.ContainsKey("LastTemperatureChange"))
-            {
-                LastTemperatureChange = tag.GetInt("LastTemperatureChange");
-            }
-            else
-            {
-                LastTemperatureChange = 0;
-            }
-        }
-
-        public override void PreUpdate()
-        {
-            WarmthSystem.PreviousTemperature[Player.whoAmI] = CurrentTemperature;
-        }
-
-        public override void PostUpdate()
-        {
-            if (Main.GameUpdateCount % WarmthSystem.TEMPERATURE_UPDATE_RATE == 0)
-            { 
-                if (Player.active && !Player.dead && !Player.ghost)
-                {
-                    ApplyWarmthDebuffs(); 
-                }
-            }
-        }
-
-        private void ApplyWarmthDebuffs()
-        {
-
-            Player.ClearBuff(ModContent.BuffType<Freezing>());
-            Player.ClearBuff(ModContent.BuffType<VeryCold>());
-            Player.ClearBuff(ModContent.BuffType<Cold>());
-
-            if (CurrentTemperature <= 200) 
-            {
-                Player.AddBuff(ModContent.BuffType<Freezing>(), 60);
-            }
-            else if (CurrentTemperature <= 500)
-            {
-                Player.AddBuff(ModContent.BuffType<VeryCold>(), 60);
-            }
-            else if (CurrentTemperature <= 800) 
-            {
-                Player.AddBuff(ModContent.BuffType<Cold>(), 60);
-            }
-
-            Player.ClearBuff(ModContent.BuffType<Scorching>());
-            Player.ClearBuff(ModContent.BuffType<Hot>());
-            Player.ClearBuff(ModContent.BuffType<Warm>());
-
-            if (CurrentTemperature >= 1800) 
-            {
-                Player.AddBuff(ModContent.BuffType<Scorching>(), 60);
-            }
-            else if (CurrentTemperature >= 1500)
-            {
-                Player.AddBuff(ModContent.BuffType<Hot>(), 60);
-            }
-            else if (CurrentTemperature >= 1200) 
-            {
-                Player.AddBuff(ModContent.BuffType<Warm>(), 60);
-            }
-        
         }
     }
 }
