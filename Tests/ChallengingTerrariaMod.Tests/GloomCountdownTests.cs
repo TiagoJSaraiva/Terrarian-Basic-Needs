@@ -52,8 +52,9 @@ namespace ChallengingTerrariaMod.Tests
             Assert.False(gloom.Active);
         }
 
+        // A10: the next gloom used to continue the old countdown ("2...") instead of starting over
         [Fact]
-        public void Recover_ThenGloomAgain_CurrentBehavior_A10()
+        public void Recover_ThenGloomAgain_StartsOver()
         {
             var gloom = new GloomCountdown();
             for (int i = 0; i < 7; i++) gloom.Tick(); // Countdown already printed 5, 4, 3
@@ -62,8 +63,8 @@ namespace ChallengingTerrariaMod.Tests
             var steps = TickUntilKill(gloom);
 
             Assert.True(steps[0].ShowWarning);
-            Assert.Equal(2, steps[0].Countdown);
-            Assert.Equal(3, steps.Count);
+            Assert.Equal(0, steps[0].Countdown);
+            Assert.Equal(10, steps.Count);
         }
 
         [Fact]

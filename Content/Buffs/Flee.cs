@@ -1,12 +1,15 @@
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ID;
 using ChallengingTerrariaMod.Content.Systems.Players;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace ChallengingTerrariaMod.Content.Buffs
 {
+    // Given by SanityPlayer.OnHurt while Terrified: the player runs away from what hit them.
     public class Flee : ModBuff
     {
+        private const float FleeSpeed = 5f;
+
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;
@@ -16,12 +19,14 @@ namespace ChallengingTerrariaMod.Content.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            var sanityPlayer = player.GetModPlayer<SanityPlayer>();
+            // Movement is owned by the player's client; other clients receive the position
+            if (player.whoAmI != Main.myPlayer) return;
 
-            if (sanityPlayer._HitDirection != 0)
+            int direction = player.GetModPlayer<SanityPlayer>().FleeDirection;
+            if (direction != 0)
             {
-                player.velocity.X = 5f * sanityPlayer._HitDirection;
-                player.direction = sanityPlayer._HitDirection; ;
+                player.velocity.X = FleeSpeed * direction;
+                player.direction = direction;
             }
             player.controlLeft = false;
             player.controlRight = false;

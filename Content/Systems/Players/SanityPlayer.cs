@@ -1,133 +1,115 @@
+using ChallengingTerrariaMod.Common;
+using ChallengingTerrariaMod.Common.Logic;
+using ChallengingTerrariaMod.Content.Buffs;
+using ChallengingTerrariaMod.Content.ModConfigs;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Terraria.ID;
-using ChallengingTerrariaMod.Content.Buffs;
-using Terraria.DataStructures;
-using Microsoft.Xna.Framework;
-using System;
-using Terraria.GameInput;
-using Terraria.Localization;
-using ChallengingTerrariaMod.Content.Systems;
 
 namespace ChallengingTerrariaMod.Content.Systems.Players
 {
     public class SanityPlayer : ModPlayer
     {
-        public bool gloomActive = false;
+        private const int DebuffDurationTicks = 61; // Renewed every second while the condition lasts
+        private const int FleeDurationTicks = 120;
+        private const float TerrifiedFleeChance = 0.2f;
+
         public float CurrentSanity;
-        private int counter = 10;
+        public int FleeDirection; // Direction the player runs to while Flee is active
 
-        public int stressedThreshold = 900;
-        public int scaredThreshold = 600;
-        public int terrifiedThreshold = 300;
+        private readonly GloomCountdown _gloom = new GloomCountdown();
 
-        public int _HitDirection;
         public override void Initialize()
         {
-            CurrentSanity = SanitySystem.maxSanity;
+            CurrentSanity = SanityLogic.Max;
         }
-        public override void ResetEffects()
-        {
 
-        }
+        // The owner's client simulates sanity; buffs are synced to other players by vanilla.
+        private bool IsSimulated => Player.whoAmI == Main.myPlayer && !Player.dead && !Player.ghost;
 
         public override void OnHurt(Player.HurtInfo info)
         {
-            if (Player.HasBuff(ModContent.BuffType<Terrified>()))
+            if (Player.whoAmI != Main.myPlayer) return;
+
+            if (Player.HasBuff(ModContent.BuffType<Terrified>()) && !Player.HasBuff(ModContent.BuffType<Flee>()) && Main.rand.NextFloat() < TerrifiedFleeChance)
             {
-                if (!Player.HasBuff(ModContent.BuffType<Flee>()) && Main.rand.NextFloat() < 0.2f)
-                {
-                    _HitDirection = info.HitDirection;
-                    Player.AddBuff(ModContent.BuffType<Flee>(), 120);
-                }
+                FleeDirection = info.HitDirection;
+                Player.AddBuff(ModContent.BuffType<Flee>(), FleeDurationTicks);
             }
         }
 
-        public override void PreUpdate()
+        public override void PostUpdate()
         {
+            if (!IsSimulated || Main.GameUpdateCount % SanityLogic.UpdateRate != 0) return;
 
+            var context = new SanityContext
+            {
+                ArmoredMind = Player.HasBuff(ModContent.BuffType<ArmoredMind>()),
+                InHostileZone = Player.ZoneDungeon || Player.ZoneUnderworldHeight || Player.ZoneCrimson || Player.ZoneCorrupt,
+                LowHealth = SanityLogic.IsLowHealth(Player.statLife, Player.statLifeMax2),
+                EclipseOrBloodMoon = Main.eclipse || Main.bloodMoon,
+                InOverworld = Player.ZoneOverworldHeight,
+                TownNPCs = Player.townNPCs,
+                Multiplier = ModContent.GetInstance<ModConfigServer>().SanityMultiplier,
+            };
+
+            CurrentSanity = SanityLogic.Clamp(CurrentSanity + SanityLogic.Delta(context));
+            ApplySanityDebuffs();
         }
 
-        public override void PostUpdateBuffs()
+        private void ApplySanityDebuffs()
         {
-            if (Main.GameUpdateCount % Common.Logic.SanityLogic.UpdateRate == 0) 
+            SanityStatus status = SanityLogic.GetStatus(CurrentSanity);
+
+            if (status == SanityStatus.Gloom) UpdateGloom();
+            else if (_gloom.Recover()) Main.NewText(Text.Get("Messages.GloomEscaped"), Color.DarkRed);
+
+            int? current = status switch
             {
-                if (Player.active && !Player.dead && !Player.ghost)
-                {
-                    ApplySanityDebuffs();
-                }
+                SanityStatus.Stressed => ModContent.BuffType<Stressed>(),
+                SanityStatus.Scared => ModContent.BuffType<Scared>(),
+                SanityStatus.Terrified or SanityStatus.Gloom => ModContent.BuffType<Terrified>(),
+                _ => null,
+            };
+
+            foreach (int debuff in new[] { ModContent.BuffType<Stressed>(), ModContent.BuffType<Scared>(), ModContent.BuffType<Terrified>() })
+            {
+                if (debuff == current) Player.AddBuff(debuff, DebuffDurationTicks);
+                else Player.ClearBuff(debuff);
             }
         }
 
-        public override void SaveData(TagCompound tag)
+        private void UpdateGloom()
         {
-            tag.Add("CurrentSanity", CurrentSanity);
-        }
+            GloomStep step = _gloom.Tick();
 
-        public override void LoadData(TagCompound tag)
-        {
-            if (tag.ContainsKey("CurrentSanity"))
+            if (step.ShowWarning) Main.NewText(Text.Get("Messages.GloomWarning"), Color.DarkRed);
+            if (step.Countdown > 0) Main.NewText(Text.Get("Messages.GloomCountdown", step.Countdown), Color.DarkRed);
+            if (step.Kill)
             {
-                CurrentSanity = tag.GetFloat("CurrentSanity");
-            }
-            else
-            {
-                CurrentSanity = 0; 
+                Player.KillMe(PlayerDeathReason.ByCustomReason(Text.Network("DeathReasons.Gloom", Player.name)), 999, 0);
             }
         }
 
         public override void OnRespawn()
         {
-            CurrentSanity = SanitySystem.maxSanity;
+            CurrentSanity = SanityLogic.Max;
+            _gloom.Reset();
         }
 
-        public void gloomEffects()
+        public override void SaveData(TagCompound tag)
         {
-            if (counter-- >= 7) return;
-            if (counter == 0)
-            {
-                var playerDeathReason = PlayerDeathReason.ByCustomReason(NetworkText.FromLiteral(Player.name + " got obliterated"));
-                Player.KillMe(playerDeathReason, 999, 0);
-                counter = 10;
-                gloomActive = false;
-                return;
-            }
-            Main.NewText($"{counter}...", Color.DarkRed);
+            tag["CurrentSanity"] = CurrentSanity;
         }
 
-        private void ApplySanityDebuffs()
+        // A missing key keeps the Initialize() value (full sanity) instead of 0, which started the death countdown.
+        public override void LoadData(TagCompound tag)
         {
-            Player.ClearBuff(ModContent.BuffType<Terrified>());
-            Player.ClearBuff(ModContent.BuffType<Scared>());
-            Player.ClearBuff(ModContent.BuffType<Stressed>());
-
-            if (CurrentSanity <= 0)
+            if (tag.ContainsKey("CurrentSanity"))
             {
-                if (!gloomActive)
-                {
-                    Main.NewText("You feel that something's terrible is about to happen", Color.DarkRed);
-                    gloomActive = true;
-                }
-                gloomEffects();
-                Player.AddBuff(ModContent.BuffType<Terrified>(), 61);
-            }
-            else if (CurrentSanity <= terrifiedThreshold)
-            {
-                if (gloomActive == true)
-                {
-                    Main.NewText("You got lucky this time", Color.DarkRed);
-                    gloomActive = false;
-                }
-                Player.AddBuff(ModContent.BuffType<Terrified>(), 61);
-            }
-            else if (CurrentSanity <= scaredThreshold)
-            {
-                Player.AddBuff(ModContent.BuffType<Scared>(), 61);
-            }
-            else if (CurrentSanity <= stressedThreshold)
-            {
-                Player.AddBuff(ModContent.BuffType<Stressed>(), 61);
+                CurrentSanity = SanityLogic.Clamp(tag.GetFloat("CurrentSanity"));
             }
         }
     }

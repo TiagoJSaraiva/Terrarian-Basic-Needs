@@ -264,4 +264,11 @@ UI: {
 
 Messages: {
 	SleepDeprived: Your sleep routine has been terrible. Your body is starting to feel the consequences.
+	GloomWarning: You feel that something terrible is about to happen
+	GloomCountdown: "{0}..."
+	GloomEscaped: You got lucky this time
+}
+
+DeathReasons: {
+	Gloom: "{0} got obliterated"
 }

@@ -49,9 +49,9 @@ namespace ChallengingTerrariaMod.Common.Logic
         // Call when sanity rises above zero. Returns true if a countdown was interrupted.
         public bool Recover()
         {
-            if (!Active) return false;
-            Active = false;
-            return true;
+            bool wasActive = Active;
+            Reset();
+            return wasActive;
         }
 
         public void Reset()
