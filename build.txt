@@ -1,4 +1,4 @@
 displayName = Terrarian Basic Needs
 author = TigasJs
-version = 1.2.6
+version = 1.2.7
 buildIgnore = Tests/*, *.md, .gitignore

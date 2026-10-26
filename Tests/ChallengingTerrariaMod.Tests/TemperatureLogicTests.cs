@@ -111,22 +111,45 @@ namespace ChallengingTerrariaMod.Tests
             Assert.Equal(-8 + 20, TemperatureLogic.EnvironmentIncrement(context, 700));
         }
 
-        // Author's decision: the potions don't change temperature at all.
         [Fact]
-        public void EnvironmentIncrement_Potions_HaveNoEffect()
+        public void EnvironmentIncrement_WarmthPotion_HalvesColdSourcesOnly()
         {
-            var cold = Day();
-            cold.InWater = true;
-            var warm = Day();
-            warm.NearHeatSource = true;
-            int coldWithout = TemperatureLogic.EnvironmentIncrement(cold, 1500);
-            int warmWithout = TemperatureLogic.EnvironmentIncrement(warm, 700);
+            var context = Day();
+            context.IsDayTime = false;
+            context.InSnow = true;
+            context.InUnderworld = true;
+            context.HasWarmthPotion = true;
+            Assert.Equal((-3 - 8) * 0.5f + 8, TemperatureLogic.EnvironmentIncrement(context, Comfortable));
+        }
 
-            cold.HasWarmthPotion = cold.HasObsidianSkin = true;
-            warm.HasWarmthPotion = warm.HasObsidianSkin = true;
+        [Fact]
+        public void EnvironmentIncrement_ObsidianSkin_HalvesHeatSourcesOnly()
+        {
+            var context = new TemperatureContext { IsDayTime = true, InSky = true, InSnow = true, HasObsidianSkin = true };
+            Assert.Equal(30 * 0.5f - 8, TemperatureLogic.EnvironmentIncrement(context, Comfortable));
+        }
 
-            Assert.Equal(coldWithout, TemperatureLogic.EnvironmentIncrement(cold, 1500));
-            Assert.Equal(warmWithout, TemperatureLogic.EnvironmentIncrement(warm, 700));
+        [Fact]
+        public void EnvironmentIncrement_Potions_DoNotChangeRecovery()
+        {
+            var water = Day();
+            water.InWater = true;
+            water.HasWarmthPotion = water.HasObsidianSkin = true;
+            Assert.Equal(-20, TemperatureLogic.EnvironmentIncrement(water, 1500));
+
+            var campfire = Day();
+            campfire.NearHeatSource = true;
+            campfire.HasWarmthPotion = campfire.HasObsidianSkin = true;
+            Assert.Equal(20, TemperatureLogic.EnvironmentIncrement(campfire, 700));
+        }
+
+        [Fact]
+        public void Step_HalfDegreeIncrement_AddsUpOverTime()
+        {
+            float remainder = 0f;
+            int temperature = Comfortable;
+            for (int i = 0; i < 10; i++) temperature = TemperatureLogic.Step(temperature, -1.5f, 1f, ref remainder);
+            Assert.Equal(Comfortable - 15, temperature);
         }
 
         [Theory]

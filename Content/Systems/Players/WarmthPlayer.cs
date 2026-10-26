@@ -57,7 +57,7 @@ namespace ChallengingTerrariaMod.Content.Systems.Players
             };
 
             float multiplier = ModContent.GetInstance<ModConfigServer>().WarmthMultiplier;
-            int increment = TemperatureLogic.EnvironmentIncrement(context, CurrentTemperature);
+            float increment = TemperatureLogic.EnvironmentIncrement(context, CurrentTemperature);
             int newTemperature = TemperatureLogic.Step(CurrentTemperature, increment, multiplier, ref _multiplierRemainder);
 
             LastTemperatureChange = newTemperature - CurrentTemperature;

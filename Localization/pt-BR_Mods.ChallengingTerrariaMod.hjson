@@ -90,23 +90,23 @@ Buffs: {
 	}
 
 	Tired: {
-		DisplayName: Cansado
 		Description: Você está ficando cansado. Pequena redução na vida e mana máximas. Durma ou sente em uma cadeira para descansar!
+		DisplayName: Cansado
 	}
 
 	Sleepy: {
-		DisplayName: Sonolento
 		Description: Um descanso cairia bem. Redução média na vida e mana máximas. Durma ou sente em uma cadeira para descansar!
+		DisplayName: Sonolento
 	}
 
 	Fainted: {
-		DisplayName: Inconsciente
 		Description: Você está tão cansado que desmaiou. Não é possível se mover nem usar itens até o efeito acabar.
+		DisplayName: Inconsciente
 	}
 
 	Exhausted: {
-		DisplayName: Exausto
 		Description: Você precisa muito dormir. Grande redução na vida e mana máximas, e você pode ficar Confuso aleatoriamente. Durma ou sente em uma cadeira para descansar!
+		DisplayName: Exausto
 	}
 
 	SleepDeprived: {
